@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+// import HorizontalBarChart from './components/HorizontalBarChart';
+import WorldMap from './components/WorldMap';
+import fetchCountries from './components/DataLoadAndTransform';
 
 function App() {
+  // const datasetPath = "/data/employees.csv";
+  // const xValue = d => d.Age;
+  // const yValue = d => d.Name;
+  const [countries, setCountries] = useState({});
+
+  fetchCountries.then((data) => {
+    setCountries(data);
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* <div>
+        <HorizontalBarChart
+          title="Edats dels treballadors"
+          datasetPath={datasetPath}
+          xValue={xValue}
+          xLabel="Nom"
+          yValue={yValue}
+          yLabel="Edat"></HorizontalBarChart>
+      </div> */}
+      <div>
+        <WorldMap width="960" height="500" countries={countries}></WorldMap>
+      </div>
+    </>
   );
 }
 

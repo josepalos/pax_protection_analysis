@@ -1,0 +1,29 @@
+text {
+    font-family: sans-serif;
+}
+
+.chart-title {
+    font-size: 3em;
+    text-anchor: middle;
+}
+
+rect {
+    fill: steelblue;
+}
+
+.tick text {
+    font-size: 1.5em;
+}
+
+.label {
+    font-size: 1em;
+    font-weight: bold;
+    text-anchor: end;
+}
+
+.axis-label {
+    fill: black;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-anchor: middle;
+}

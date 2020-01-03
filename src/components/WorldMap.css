@@ -1,0 +1,13 @@
+svg {
+    background-color: lightblue;
+}
+
+.country {
+    stroke:black;
+    stroke-opacity: .5;
+}
+
+.country:hover {
+    fill: red;
+    stroke-width: 2px;
+}
