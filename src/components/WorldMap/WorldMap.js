@@ -19,16 +19,15 @@ const WorldMap = ( { width, height, countries } ) => {
     const colorScale = scaleSequential();
 
     const renderMap = (svg) => {
-        const maxValue = max(countries.features.map(colorValue));
         colorScale
             .interpolator(interpolateReds)
-            .domain([0, maxValue])
+            .domain([0, max(countries.features, colorValue)])
 
         svg.selectAll("path").data(countries.features)
             .enter().append("path")
                 .attr("class", styles.country)
                 .attr("d", pathGenerator)
-                .attr("fill", d => colorScale(colorValue(d)))
+                .attr("fill", d => colorValue(d) === 0 ? "lightgrey" : colorScale(colorValue(d)))
             .append("title")
                 .text(getCountryTitle);
     };
@@ -47,7 +46,7 @@ const WorldMap = ( { width, height, countries } ) => {
         <div>
             <svg id="world-map" className={styles.world_map} width={width} height={height}></svg>
             <div className="help">
-                <p>Hover the cursor over a country to see the number of agreements</p>
+                <p>Situa el cursor sobre un país per veure el nombre d'acords en els que està involucrat</p>
             </div>
         </div>
     );

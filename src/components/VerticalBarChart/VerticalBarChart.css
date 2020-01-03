@@ -1,0 +1,30 @@
+.bar-chart text {
+    font-family: sans-serif;
+}
+
+.bar-chart .chart-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.bar-chart rect {
+    fill: steelblue;
+}
+
+.bar-chart .tick text {
+    font-size: 1.3em;
+}
+
+.bar-chart .label {
+    font-size: 1em;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.bar-chart .axis-label {
+    fill: black;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-anchor: middle;
+}

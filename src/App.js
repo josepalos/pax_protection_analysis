@@ -1,21 +1,34 @@
 import React, { useState } from 'react';
 import Tabs from './components/Tabs/Tabs';
-import HorizontalBarChart from './components/HorizontalBarChart/HorizontalBarChart';
+import VerticalBarChart from './components/VerticalBarChart/VerticalBarChart';
 import WorldMap from './components/WorldMap/WorldMap';
 import fetchCountries from './components/DataLoadAndTransform';
 
+const fetchYears = new Promise((resolve, reject) => {
+  const data = [];
+  for(let i = 1990; i <= 2019; i++){
+    data.push({any: i, n: Math.floor(Math.random() * 100)});
+  }
+  resolve(data);
+});
+
 function App() {
-  const initialTab = "Number of agreements over the years";
+  const initialTab = "Visió general";
   const [countries, setCountries] = useState({});
   const [activeTab, setActiveTab] = useState(initialTab);
-
-  const datasetPath = "/data/employees.csv";
-  const xValue = d => d.Age;
-  const yValue = d => d.Name;
+  const [years, setYears] = useState([]);
 
   fetchCountries.then((data) => {
     setCountries(data);
   });
+
+  fetchYears.then((data) => {
+    setYears(data);
+  });
+
+  const xValue = d => d.any;
+  const yValue = d => d.n;
+  
 
   return (
     <>
@@ -23,19 +36,23 @@ function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       >
-        <div label="Number of agreements over the years">
-          <HorizontalBarChart
-            title="Edats dels treballadors"
+        <div label={initialTab}>
+          <VerticalBarChart
+            title="Quantitat d'acords signats cada any"
             width="700"
-            height="300"
-            datasetPath={datasetPath}
+            height="500"
+            data={years}
             xValue={xValue}
-            xLabel="Nom"
+            xLabel="Any"
             yValue={yValue}
-            yLabel="Edat"/>
+            yLabel="Nombre d'acords"/>
+
+            <hr/>
+
+            <WorldMap width="960" height="500" countries={countries}></WorldMap>
         </div>
-        <div label="World map agreements">
-          <WorldMap width="960" height="500" countries={countries}></WorldMap>
+        <div label="Distribució dels acords segons el nivell de protecció">
+          
         </div>
       </Tabs>
     </>
