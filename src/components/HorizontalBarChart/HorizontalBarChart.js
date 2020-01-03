@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './HorizontalBarChart.css';
+import styles from './HorizontalBarChart.module.css';
 import {
     select,
     csv,
@@ -10,9 +10,11 @@ import {
     axisBottom
 } from 'd3';
 
-const HorizontalBarChart = ({title, datasetPath, xValue, xLabel, yValue, yLabel}) => {
-    const width = 700;
-    const height = 300;
+const HorizontalBarChart = (props) => {
+    const {
+        title, width, height, datasetPath, xValue, xLabel, yValue, yLabel
+    } = props;
+
     const margin = {
         top: 100,
         right: 10,
@@ -37,7 +39,7 @@ const HorizontalBarChart = ({title, datasetPath, xValue, xLabel, yValue, yLabel}
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         g.append("text")
-            .attr("class", "chart-title")
+            .attr("class", styles.chart_title)
             .attr("y", -20)
             .attr("x", innerWidth / 2)
             .text(title);
@@ -47,7 +49,7 @@ const HorizontalBarChart = ({title, datasetPath, xValue, xLabel, yValue, yLabel}
         yAxisG.selectAll(".domain, .tick line")
             .remove();
         yAxisG.append("text")
-            .attr("class", "axis-label")
+            .attr("class", styles.axis_label)
             .attr("y", -60)
             .attr("x", -innerHeight / 2)
             .attr("transform", "rotate(-90)")
@@ -61,24 +63,24 @@ const HorizontalBarChart = ({title, datasetPath, xValue, xLabel, yValue, yLabel}
         xAxisG.select(".domain")
             .remove();
         xAxisG.append("text")
-            .attr("class", "axis-label")
+            .attr("class", styles.axis_label)
             .attr("y", 40)
             .attr("x", innerWidth / 2)
             .text(xLabel);
 
         // Set bars
-        const bars = g.selectAll(".bar")
+        const bars = g.selectAll(styles.bar)
             .data(data)
             .enter()
             .append("g")
-            .attr("class", "bar")
+            .attr("class", styles.bar)
             .attr("transform", d => `translate(0, ${yScale(yValue(d))})`);
         
         bars.append("rect")
             .attr("width", d => xScale(xValue(d)))
             .attr("height", yScale.bandwidth());
         bars.append("text")
-            .attr("class", "label")
+            .attr("class", styles.label)
             .attr("x", d => xScale(xValue(d)))
             .attr("y", yScale.bandwidth() / 2)
             .attr("dy", ".35em")

@@ -7,8 +7,7 @@ import {
     scaleSequential,
     interpolateReds
 } from 'd3';
-
-import './WorldMap.css';
+import styles from './WorldMap.module.css';
 
 
 const WorldMap = ( { width, height, countries } ) => {
@@ -24,15 +23,14 @@ const WorldMap = ( { width, height, countries } ) => {
         colorScale
             .interpolator(interpolateReds)
             .domain([0, maxValue])
-        console.log(colorScale.domain());
 
         svg.selectAll("path").data(countries.features)
             .enter().append("path")
-                .attr("class", "country")
+                .attr("class", styles.country)
                 .attr("d", pathGenerator)
                 .attr("fill", d => colorScale(colorValue(d)))
             .append("title")
-                .text(getCountryTitle)
+                .text(getCountryTitle);
     };
 
     useEffect( () => {
@@ -45,7 +43,14 @@ const WorldMap = ( { width, height, countries } ) => {
         }
     });
 
-    return <svg id="world-map" width={width} height={height}></svg>
+    return (
+        <div>
+            <svg id="world-map" className={styles.world_map} width={width} height={height}></svg>
+            <div className="help">
+                <p>Hover the cursor over a country to see the number of agreements</p>
+            </div>
+        </div>
+    );
 }
 
 export default WorldMap;
