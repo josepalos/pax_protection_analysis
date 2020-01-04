@@ -5,6 +5,7 @@ import 'react-tabs/style/react-tabs.css';
 import fetchCountries from './components/DataLoadAndTransform';
 import Overview from "./components/Overview";
 import DistributionAccordingToProtectionLevelView from "./components/DistributionAccordingToProtectionLevelView";
+import Relations from "./components/Relations";
 
 const createYears = (minValue, maxValue) => {
     const data = [];
@@ -62,8 +63,10 @@ function App() {
     const tabs = [
         "Visió general",
         "Distribució dels acords segons el nivell de protecció",
-        "TODO"
+        "Relacions interessants entre variables dels acords"
     ];
+
+    const defaultTabIndex = 2;
 
     const [countries, setCountries] = useState({});
     const [years, setYears] = useState([]);
@@ -72,11 +75,11 @@ function App() {
     fetchYears.then((data) => setYears(data));
 
     return (
-        <Tabs forceRenderTabPanel={true}>
+        <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
             <TabList>
-                <Tab>{tabs[0]}</Tab>
-                <Tab>{tabs[1]}</Tab>
-                <Tab>{tabs[2]}</Tab>
+                {tabs.map( (tab, i) => (
+                    <Tab key={i}>{tab}</Tab>
+                ))}
             </TabList>
 
             <TabPanel>
@@ -92,7 +95,7 @@ function App() {
                 />
             </TabPanel>
             <TabPanel>
-                    <p>Not implemented yet</p>
+                 <Relations/>
             </TabPanel>
         </Tabs>
     );
