@@ -5,7 +5,7 @@ import styles from './Tabs.module.css';
 const Tabs = ({activeTab, setActiveTab, children}) => {
     const onClickTabItem = (tab) => {
         setActiveTab(tab);
-    }
+    };
 
     return (
         <div>
@@ -23,7 +23,7 @@ const Tabs = ({activeTab, setActiveTab, children}) => {
                     )
                 })}
             </ol>
-            <div className={styles.tab_content}>
+            <div className={"tab-content"}>
                 {children.map((child) => {
                     if(child.props.label !== activeTab) return undefined;
                     return child.props.children;

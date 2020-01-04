@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Tabs from './components/Tabs/Tabs';
 import VerticalBarChart from './components/VerticalBarChart/VerticalBarChart';
+import VerticalGroupedBarChart from './components/VerticalBarChart/VerticalGroupedBarChart';
 import WorldMap from './components/WorldMap/WorldMap';
 import fetchCountries from './components/DataLoadAndTransform';
 import SquaresTable from './components/SquaresTable/SquaresTable';
@@ -22,27 +23,27 @@ const agreements = [
   {r: 2, d: 3, s: 1, o: 3}
 ];
 
-const agreeementsGrouped = (agreements) => [
-  {x: 1, y: 2, g: "R"},
-  {x: 1, y: 0, g: "D"},
-  {x: 1, y: 2, g: "S"},
-  {x: 1, y: 0, g: "O"},
-  {x: 2, y: 1, g: "R"},
-  {x: 2, y: 1, g: "D"},
-  {x: 2, y: 0, g: "S"},
-  {x: 2, y: 1, g: "O"},
-  {x: 3, y: 0, g: "R"},
-  {x: 3, y: 1, g: "D"},
-  {x: 3, y: 0, g: "S"},
-  {x: 3, y: 1, g: "O"},
-  {x: 4, y: 0, g: "R"},
-  {x: 4, y: 0, g: "D"},
-  {x: 4, y: 1, g: "S"},
-  {x: 4, y: 0, g: "O"},
-  {x: 5, y: 0, g: "R"},
-  {x: 5, y: 0, g: "D"},
-  {x: 5, y: 0, g: "S"},
-  {x: 5, y: 1, g: "O"},
+const agreementsGrouped = (agreements) => [
+  {x: 1, y: 2, g: "Retòrica"},
+  {x: 1, y: 0, g: "Anti-discriminació"},
+  {x: 1, y: 2, g: "Substantiva"},
+  {x: 1, y: 0, g: "Altres"},
+  {x: 2, y: 1, g: "Retòrica"},
+  {x: 2, y: 1, g: "Anti-discriminació"},
+  {x: 2, y: 0, g: "Substantiva"},
+  {x: 2, y: 1, g: "Altres"},
+  {x: 3, y: 0, g: "Retòrica"},
+  {x: 3, y: 1, g: "Anti-discriminació"},
+  {x: 3, y: 0, g: "Substantiva"},
+  {x: 3, y: 1, g: "Altres"},
+  {x: 4, y: 0, g: "Retòrica"},
+  {x: 4, y: 0, g: "Anti-discriminació"},
+  {x: 4, y: 1, g: "Substantiva"},
+  {x: 4, y: 0, g: "Altres"},
+  {x: 5, y: 0, g: "Retòrica"},
+  {x: 5, y: 0, g: "Anti-discriminació"},
+  {x: 5, y: 0, g: "Substantiva"},
+  {x: 5, y: 1, g: "Altres"},
 ];
 
 function App() {
@@ -62,46 +63,21 @@ function App() {
 
   return (
     <>
-      <VerticalBarChart
-          title="Quantitat d'acords signats cada any"
-          width="700"
-          height="500"
-          data={years}
-          xValue={d => d.any}
-          xLabel="Any"
-          yValue={d => d.n}
-          yLabel="Nombre d'acords"
-          xAxisTickRotation={-55}
-      />
-
-      <VerticalBarChart
-          title="Quantitat de grups protegits segons el nivell i acord"
-          width="700"
-          height="500"
-          data={agreeementsGrouped(agreements)}
-          xValue={group => group.x}
-          xLabel="Número de grups protegits"
-          yValue={group => group.y}
-          yLabel="Número d'acords"
-          // groupBy={group => group.g}
-      />
-
-
-      {/*<Tabs
+      <Tabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       >
         <div label={tabs[0]}>
           <VerticalBarChart
-            title="Quantitat d'acords signats cada any"
-            width="700"
-            height="500"
-            data={years}
-            xValue={d => d.any}
-            xLabel="Any"
-            yValue={d => d.n}
-            yLabel="Nombre d'acords"
-            xAxisTickRotation={-55}
+              title="Quantitat d'acords signats cada any"
+              width="800"
+              height="500"
+              data={years}
+              xValue={d => d.any}
+              xLabel="Any"
+              yValue={d => d.n}
+              yLabel="Nombre d'acords"
+              xAxisTickRotation={-55}
           />
 
             <hr/>
@@ -139,22 +115,29 @@ function App() {
             />
 
           <hr/>
-          <VerticalBarChart
-            title="Quantitat de grups protegits segons el nivell i acord"
-            width="700"
-            height="500"
-            data={agreeementsGrouped(agreements)}
-            xValue={group => group.x}
-            xLabel="Número de grups protegits"
-            yValue={group => group.y}
-            yLabel="Número d'acords"
-            // groupBy={group => group.g}
+          <VerticalGroupedBarChart
+              title="Quantitat de grups protegits segons el nivell i acord"
+              width="800"
+              height="500"
+              margin={{top: 50, right: 200, bottom: 80, left: 70}}
+              data={agreementsGrouped(agreements)}
+              xValue={group => group.x}
+              xLabel="Número de grups protegits"
+              yValue={group => group.y}
+              yLabel="Número d'acords"
+              groupBy={group => group.g}
+              groupByAbbreviation={{
+                "Retòrica": "R",
+                "Anti-discriminació": "D",
+                "Substantiva": "S",
+                "Altres": "O"
+              }}
           />
         </div>
         <div label={tabs[2]}>
             <p>Not implemented yet</p>
         </div>
-      </Tabs>*/}
+      </Tabs>
     </>
   );
 }

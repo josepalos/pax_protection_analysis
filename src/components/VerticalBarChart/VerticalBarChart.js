@@ -20,7 +20,6 @@ const VerticalBarChart = (props) => {
         xLabel,
         yValue,
         yLabel,
-        //groupBy = undefined,
         margin = {top: 100, right: 10, bottom: 80, left: 70},
         xAxisTickRotation = 0
     } = props;
@@ -105,7 +104,9 @@ const VerticalBarChart = (props) => {
         const barHeight = (d) => innerHeight - yScale(yValue(d));
 
         const bars = innerG.selectAll("rect").data(data);
-        bars.enter().append("rect")
+        bars.enter()
+            .append("rect")
+                .attr("class", "no-group")
             .merge(bars)
                 .attr("x", xPos)
                 .attr("width", barWidth)
