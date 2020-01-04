@@ -26,7 +26,6 @@ const VerticalGroupedBarChart = (props) => {
         groupBy,
         groupByAbbreviation = undefined,
         margin,
-        xAxisTickRotation = 0
     } = props;
 
     const svgRef = createRef();

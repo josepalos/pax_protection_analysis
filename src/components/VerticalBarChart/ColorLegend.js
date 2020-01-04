@@ -8,7 +8,7 @@ const colorLegend = (selection, props) => {
         groupByAbbreviation = undefined
     } = props;
 
-    const rect = selection.append("rect")
+    selection.append("rect")
         .attr("rx", radius)
         .attr("width", legendWidth)
         .attr("height", colorScale.domain().length * spacing);

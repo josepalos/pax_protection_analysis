@@ -7,7 +7,7 @@ const someData = {
     "France": 5,
     "Egypt": 1,
     "Canada": 100
-}
+};
 
 const fetchCountries = new Promise((resolve, reject) => {
     Promise.all([
@@ -30,4 +30,35 @@ const fetchCountries = new Promise((resolve, reject) => {
     });
 });
 
-export default fetchCountries;
+const fetchAgreements = new Promise((resolve, reject) => {
+    const agreements = [];
+    const levels = ["Rhet", "Antid", "Subs", "Other"];
+    const contp = ["Government", "Territory", "Government/territory", "Inter-group", "Other"];
+    const status = ["Multiparty signed/agreed", "Unilateral agreement", "Status unclear", "Agreement with Subsequent Status"]
+    const randItem = (list) => list[Math.floor(Math.random() * list.length)];
+
+    for(let i = 0; i < 100; i++){
+        agreements.push({
+            Con: "Spain",
+            Contp: randItem(contp),
+            AgtId: i,
+            Agt: `Agreement ${i}`,
+            Dat: Math.floor(1990 + Math.random() * (2019 - 1990)),
+            Status: randItem(status),
+            GCh: randItem(levels),
+            GDis: randItem(levels),
+            GAge: randItem(levels),
+            GMig: randItem(levels),
+            GRa: randItem(levels),
+            GRe: randItem(levels),
+            GInd: randItem(levels),
+            GOth: randItem(levels),
+            GRef: randItem(levels),
+            GSoc: randItem(levels),
+            HrNi: randItem(levels)
+        });
+    }
+    resolve(agreements);
+});
+
+export { fetchCountries, fetchAgreements };

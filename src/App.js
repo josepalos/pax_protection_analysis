@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import fetchCountries from './components/DataLoadAndTransform';
+import {fetchCountries, fetchAgreements} from './components/DataLoadAndTransform';
 import Overview from "./components/Overview";
 import DistributionAccordingToProtectionLevelView from "./components/DistributionAccordingToProtectionLevelView";
 import Relations from "./components/Relations";
@@ -69,10 +69,12 @@ function App() {
     const defaultTabIndex = 2;
 
     const [countries, setCountries] = useState({});
+    const [agreements, setAgreements] = useState([]);
     const [years, setYears] = useState([]);
 
     fetchCountries.then((data) => setCountries(data));
     fetchYears.then((data) => setYears(data));
+    fetchAgreements.then((data) => setAgreements(data));
 
     return (
         <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
@@ -95,7 +97,7 @@ function App() {
                 />
             </TabPanel>
             <TabPanel>
-                 <Relations/>
+                <Relations agreements={agreements}/>
             </TabPanel>
         </Tabs>
     );
