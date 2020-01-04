@@ -2,6 +2,34 @@ import React from "react";
 import SquaresTable from "./SquaresTable/SquaresTable";
 import VerticalGroupedBarChart from "./VerticalBarChart/VerticalGroupedBarChart";
 
+const tableData = [
+    ["Government/territory",
+        {n: 13, median: 2},
+        {n: 20, median: 1},
+        {n:  5, median: 5,},
+        {n:  4, median: 4}],
+    ["Government",
+        {n: 13, median: 2},
+        {n: 20, median: 1},
+        {n:  5, median: 5,},
+        {n:  4, median: 4}],
+    ["Inter-group",
+        {n: 13, median: 2},
+        {n: 20, median: 1},
+        {n:  5, median: 5,},
+        {n:  4, median: 4}],
+    ["Other",
+        {n: 13, median: 2},
+        {n: 20, median: 1},
+        {n:  5, median: 5,},
+        {n:  4, median: 4}],
+    ["Territory",
+        {n: 13, median: 2},
+        {n: 20, median: 1},
+        {n:  5, median: 5,},
+        {n:  4, median: 4}]
+];
+
 const DistributionAccordingToProtectionLevelView = ({protectionLevels, agreementsGrouped}) => (
     <div>
         <SquaresTable
@@ -16,7 +44,6 @@ const DistributionAccordingToProtectionLevelView = ({protectionLevels, agreement
             ]}
             columnsName="Children/Youth"
         />
-
         <hr/>
         <VerticalGroupedBarChart
             title="Quantitat de grups protegits segons el nivell i acord"
@@ -36,6 +63,32 @@ const DistributionAccordingToProtectionLevelView = ({protectionLevels, agreement
                 "Altres": "O"
             }}
         />
+        <hr/>
+        <table>
+            <thead>
+            <tr>
+                <td rowSpan={2}></td>
+                <td colSpan={4}># grups protegits (mediana)</td>
+            </tr>
+            <tr>
+                <td>retòricament</td>
+                <td>discriminació</td>
+                <td>substancialment</td>
+                <td>altres</td>
+            </tr>
+            </thead>
+            <tbody>
+            {tableData.map( (row) => {
+                const data = [...row];
+                const rowName = data.shift();
+
+                return (<tr key={rowName}>
+                    <td>{rowName}</td>
+                    {data.map( (d, i) => <td key={i}>{d.n} ({d.median})</td>)}
+                </tr>)
+            })}
+            </tbody>
+        </table>
     </div>
 );
 
