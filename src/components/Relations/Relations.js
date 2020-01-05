@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import RelationBetweenGroups from "./RelationBetweenGroups";
+import RelationBetweenGroupAndHrNi from "./RelationBetweenGroupAndHrNi";
 
 const Relations = ({agreements}) => {
     const possibleOptions = ["GCh", "GDis", "GAge", "GMig", "GRa", "GRe", "GInd",
@@ -8,12 +9,18 @@ const Relations = ({agreements}) => {
     const [selectedX, setSelectedX] = useState(possibleOptions[0]);
     const [selectedY, setSelectedY] = useState(possibleOptions[1]);
 
+    const [selectedGroup, setSelectedGroup] = useState(possibleOptions[0]);
+
     const handleXSelectorChange = (event) => {
         setSelectedX(event.target.value);
     };
 
     const handleYSelectorChange = (event) => {
         setSelectedY(event.target.value);
+    };
+
+    const handleGroupSelectorChange = (event) => {
+        setSelectedGroup(event.target.value);
     };
 
     return (
@@ -30,7 +37,12 @@ const Relations = ({agreements}) => {
                     />
                 </div>
                 <div style={{display: "table-cell"}}>
-                    <p>Not implemented</p>
+                    <RelationBetweenGroupAndHrNi
+                        data={agreements}
+                        possibleOptions={possibleOptions}
+                        selectedGroup={selectedGroup}
+                        onGroupChange={handleGroupSelectorChange}
+                    />
                 </div>
             </div>
         </div>
