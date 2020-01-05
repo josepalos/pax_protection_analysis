@@ -1,4 +1,4 @@
-import React, { createRef, useEffect } from 'react';
+import React, {createRef, useEffect} from 'react';
 import "./VerticalBarChart.css";
 import colorLegend from "./ColorLegend";
 
@@ -32,10 +32,11 @@ const VerticalGroupedBarChart = (props) => {
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
+    const separatorLength = 40;
 
     function createScales(data) {
         const xScale = scaleBand()
-            .domain(data.map(xValue))
+            .domain(data.map(xValue).sort())
             .range([0, innerWidth])
             .padding(0.1);
 
@@ -52,32 +53,25 @@ const VerticalGroupedBarChart = (props) => {
         return {xScale, yScale, subXScale};
     }
 
-    const render = data => {
+    const render = (selection,  {data}) => {
         const {xScale, yScale, subXScale} = createScales(data);
 
-        const colorSelector = scaleOrdinal();
-        colorSelector.domain(data.map(groupBy))
-            .range(schemeSpectral[colorSelector.domain().length]);
+        const colorSelector = scaleOrdinal().domain(data.map(groupBy)); // Split in two lines to get the length of the domain
+        colorSelector.range(schemeSpectral[colorSelector.domain().length]);
 
-        const xPos = (d) => xScale(xValue(d)) + subXScale(groupBy(d));
-        const yPos = (d) => yScale(yValue(d));
-        const barWidth = subXScale.bandwidth();
-        const barHeight = (d) => innerHeight - yScale(yValue(d));
-
-        const svg = select(svgRef.current);
-
-        // General update pattern
-        const innerG = svg.selectAll(".bar-chart-container").data([null]);
-        const innerGEnter = innerG.enter().append("g")
-            .attr("class", "bar-chart-container");
-        innerGEnter.merge(innerG)
-            .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-        svg.append("text")
+        // Chart title
+        selection.append("text")
             .attr("class", "chart-title")
             .attr("y", 25)
             .attr("x", width / 2)
             .text(title);
+
+        // General update pattern
+        const innerG = selection.selectAll(".bar-chart-container").data([null]);
+        const innerGEnter = innerG.enter().append("g")
+            .attr("class", "bar-chart-container");
+        innerGEnter.merge(innerG)
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
         // Set axis
         const yAxis = axisLeft(yScale)
@@ -106,7 +100,6 @@ const VerticalGroupedBarChart = (props) => {
             .attr("transform", `translate(0, ${innerHeight + 20})`)
             .selectAll(".domain, .tick line").remove();
         xAxisG.selectAll(".tick text");
-            //.attr("transform", `translate(-18, 18) rotate(${xAxisTickRotation})`);
         xAxisGEnter
             .append("text")
             .attr("class", "axis-label")
@@ -116,42 +109,45 @@ const VerticalGroupedBarChart = (props) => {
             .text(xLabel);
 
         const groupAxis = axisBottom(subXScale);
-        if(groupByAbbreviation !== undefined){
+        if (groupByAbbreviation !== undefined) {
             groupAxis.tickFormat(d => groupByAbbreviation[d]);
         }
-        const groupAxisG = innerG.selectAll(".group-axis").data(xScale.domain());
+
+        const groupAxisG = innerG.merge(innerGEnter)
+            .selectAll(".group-axis").data(xScale.domain());
         groupAxisG.enter().append("g")
             .attr("class", "group-axis")
             .merge(groupAxisG)
             .call(groupAxis)
-                .attr("transform", d => `translate(${xScale(d)}, ${innerHeight})`);
-        groupAxisG.selectAll(".domain, .tick line").remove();
+            .attr("transform", d => `translate(${xScale(d)}, ${innerHeight})`)
+            .selectAll(".domain, .tick line").remove();
 
         // X separators
-        const xSeparators = innerG.selectAll(".x-separator").data(xScale.domain());
         const separatorXCoord = d => xScale(d) - xScale.step() * xScale.paddingInner() / 2;
+        const xSeparators = innerG.merge(innerGEnter)
+            .selectAll(".x-separator").data(xScale.domain().filter((d,i) => i !== 0));
         xSeparators.enter().append("line")
             .attr("class", "x-separator")
+            .attr("stroke", "black")
             .merge(xSeparators)
-                .attr("stroke", "black")
-                .attr("x1", separatorXCoord)
-                .attr("x2", separatorXCoord)
-                .attr("y1", innerHeight)
-                .attr("y2", innerHeight + 40);
+            .attr("x1", separatorXCoord)
+            .attr("x2", separatorXCoord)
+            .attr("y1", innerHeight)
+            .attr("y2", innerHeight + separatorLength);
 
         // Set bars
-        const bars = innerG.selectAll(".bars").data(data);
+        const bars = innerGEnter.selectAll(".bars").data(data);
         bars.enter().append("rect")
             .attr("class", "bars")
             .merge(bars)
-                .attr("fill", d => colorSelector(groupBy(d)))
-                .attr("x", xPos)
-                .attr("width", barWidth)
-                .attr("y", yPos)
-                .attr("height", barHeight);
+            .attr("fill", d => colorSelector(groupBy(d)))
+            .attr("x", (d) => xScale(xValue(d)) + subXScale(groupBy(d)))
+            .attr("width", subXScale.bandwidth())
+            .attr("y", (d) => yScale(yValue(d)))
+            .attr("height", (d) => innerHeight - yScale(yValue(d)));
 
         // Set legend
-        const legendG = svg.selectAll(".legend").data([null]);
+        const legendG = selection.selectAll(".legend").data([null]);
         const legendGEnter = legendG
             .enter()
             .append("g")
@@ -159,7 +155,7 @@ const VerticalGroupedBarChart = (props) => {
         legendGEnter.merge(legendG)
             .attr("transform", `translate(${width - margin.right}, ${margin.top})`);
 
-        legendG.call(colorLegend, {
+        legendGEnter.call(colorLegend, {
             colorScale: colorSelector,
             radius: 10,
             spacing: 30,
@@ -170,10 +166,11 @@ const VerticalGroupedBarChart = (props) => {
     };
 
     useEffect(() => {
-        if(data === undefined || data.length < 1){
+        if (data === undefined || data.length < 1) {
             console.log("Loading years data");
-        }else{
-            render(data);
+        } else {
+            select(svgRef.current)
+                .call(render, {data});
         }
     });
 

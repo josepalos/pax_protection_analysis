@@ -54,7 +54,7 @@ const renderPlot = (selection, props) => {
         .merge(innerG)
         .attr("transform", `translate(${margins.left}, ${margins.top})`);
 
-    innerG.append("rect")
+    innerGEnter.append("rect")
         .attr("class", "bounding-box")
         .attr("stroke", "black")
         .attr("fill", "none")
@@ -195,8 +195,6 @@ const DiscretePointPlot = (props) => {
                     xLabel: xLabel,
                     yLabel: yLabel
                 });
-        }else{
-            console.log("Loading data");
         }
     });
 

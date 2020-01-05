@@ -9,26 +9,26 @@ const SquaresTable = (props) => {
         rowsName,
         columns,
         columnsName,
-        minWidth = 10,
-        maxWidth = 20
+        minArea,
+        maxArea
     } = props;
 
     const maxForRow = (row) => max(Object.values(row));
 
     var cellsScale = scaleSqrt()
         .domain([0, max(Object.values(data), maxForRow)])
-        .range([minWidth, maxWidth]);
+        .range([minArea, maxArea]);
 
     const createCell = (row, col, i) => {
         const value = data[row][col];
         if(value === 0){
-            return <td key={i}></td>
+            return <td key={i}/>
         }
         const size = cellsScale(value);
         return (
             <td key={i}>
                 <svg width={size} height={size}>
-                    <rect width={size} height={size}></rect>
+                    <rect width={size} height={size}/>
                     <title>{value}</title>
                 </svg>
             </td>

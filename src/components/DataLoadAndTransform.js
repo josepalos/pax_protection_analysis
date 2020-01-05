@@ -1,5 +1,8 @@
-import { tsv, json } from 'd3';
-import { feature } from 'topojson';
+import {csv, json, tsv} from 'd3';
+import {feature} from 'topojson';
+
+const datasetUrl = "/data/pax_all_agreements_data.csv";
+
 
 const someData = {
     "Spain": 10,
@@ -30,57 +33,94 @@ const fetchCountries = new Promise((resolve, reject) => {
     });
 });
 
-const agreements = [];
-const con = ["Spain", "Mexico", "France", "Egypt", "Canada"];
-const levels = ["Rhet", "Antid", "Subs", "Other"];
-const contp = ["Government", "Territory", "Government/territory", "Inter-group", "Other"];
-const status = ["Multiparty signed/agreed", "Unilateral agreement", "Status unclear", "Agreement with Subsequent Status"]
-const randItem = (list) => list[Math.floor(Math.random() * list.length)];
-
 const fetchAgreements = new Promise((resolve, reject) => {
-    for(let i = 0; i < 100; i++){
-        agreements.push({
-            Con: randItem(con),
-            Contp: randItem(contp),
-            AgtId: i,
-            Agt: `Agreement ${i}`,
-            Dat: Math.floor(1990 + Math.random() * (2019 - 1990)),
-            Status: randItem(status),
-            GCh: randItem(levels),
-            GDis: randItem(levels),
-            GAge: randItem(levels),
-            GMig: randItem(levels),
-            GRa: randItem(levels),
-            GRe: randItem(levels),
-            GInd: randItem(levels),
-            GOth: randItem(levels),
-            GRef: randItem(levels),
-            GSoc: randItem(levels),
-            HrNi: randItem(levels)
+
+    const parseCsv = (d) => {
+        const groups = ["GCh", "GDis", "GAge", "GMig", "GRa", "GRe",
+            "GInd", "GOth", "GRef", "GSoc"];
+        const protections = ["Rhet", "Antid", "Subs", "Other"];
+
+        const protectionsForGrous = groups.map( (group) =>
+            protections.map( (p) => `${group}${p}`)
+        ).flat();
+
+        // TODO add variables of group+"Rhet", group+"Antid"...
+        const attributesToReturn = ["Con", "Contp", "AgtId", "Agt",
+            "Dat", "Status", "HrNi", ...groups, ...protectionsForGrous];
+
+        // filter attributes
+        return Object.keys(d)
+            .filter(key => attributesToReturn.includes(key))
+            .reduce((obj, key) => {
+                if (groups.includes(key) || key === "HrNi" || protectionsForGrous.includes(key)){
+                    // Numeric attributes
+                    obj[key] = +d[key];
+                }else if (key === "Dat")
+                    obj.Year = new Date(d[key]).getFullYear();
+                else
+                    obj[key] = d[key];
+
+                // Add aggregation variables
+                obj.rhetoricalCount = groups.reduce(
+                    (count, group) => count + (+d[`${group}Rhet`] === 1 ? 1 : 0)
+                , 0);
+                obj.antiDiscriminationCount = groups.reduce(
+                    (count, group) => count + (+d[`${group}Antid`] === 1 ? 1 : 0)
+                    , 0);
+                obj.substantiveCount = groups.reduce(
+                    (count, group) => count + (+d[`${group}Subs`] === 1 ? 1 : 0)
+                    , 0);
+                obj.otherProtectionsCount = groups.reduce(
+                    (count, group) => count + (+d[`${group}Other`] === 1 ? 1 : 0)
+                    , 0);
+                // TODO
+
+                return obj;
+            }, {})
+    };
+
+    csv(datasetUrl, parseCsv)
+        .then(agreementsData => {
+            resolve(agreementsData)
         });
-    }
-    resolve(agreements);
 });
 
-const countAgreementsBy = (agreements, by) => {
+const generalSort = (e1, e2) => {
+    if(e1.key < e2.key)
+        return -1;
+    else if(e1.key === e2.key)
+        return 0;
+    else
+        return 1;
+};
+
+const countAgreementsBy = (agreements, by, attributesIf = undefined) => {
     const data = {};
     agreements.forEach( (agreement) => {
         const key = by(agreement);
         if(!(key in data)){
-            data[key] = {key: key, count: 0};
+            data[key] = {key: key};
+            if(attributesIf === undefined){
+                data[key].count = 0;
+            }else{
+                Object.keys(attributesIf).forEach( (attr) => {
+                    data[key][attr] = 0
+                });
+            }
         }
 
-        data[key].count++;
-    });
+        if(attributesIf === undefined){
+            data[key].count++;
+        }else{
+            for( let attr in attributesIf ){
+                const ifFunc = attributesIf[attr];
+                if(ifFunc(agreement)){
+                    data[key][attr]++;
+                }
+            }
 
-    const generalSort = (e1, e2) => {
-        if(e1.key < e2.key)
-            return -1;
-        else if(e1.key === e2.key)
-            return 0;
-        else
-            return 1;
-    };
+        }
+    });
 
     return Object.values(data).sort(generalSort);
 };

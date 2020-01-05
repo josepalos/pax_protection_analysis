@@ -21,7 +21,7 @@ const WorldMap = ( { width, height, countries } ) => {
     const renderMap = (svg) => {
         colorScale
             .interpolator(interpolateReds)
-            .domain([0, max(countries.features, colorValue)])
+            .domain([0, max(countries.features, colorValue)]);
 
         svg.selectAll("path").data(countries.features)
             .enter().append("path")
@@ -44,12 +44,16 @@ const WorldMap = ( { width, height, countries } ) => {
 
     return (
         <div>
-            <svg id="world-map" className={styles.world_map} width={width} height={height}></svg>
+            <svg id="world-map"
+                 className={styles.world_map}
+                 width={width}
+                 height={height}
+            />
             <div className="help">
                 <p>Situa el cursor sobre un país per veure el nombre d'acords en els que està involucrat</p>
             </div>
         </div>
     );
-}
+};
 
 export default WorldMap;
