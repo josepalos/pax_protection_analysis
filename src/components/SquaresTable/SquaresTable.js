@@ -5,13 +5,18 @@ const SquaresTable = (props) => {
     const {
         title,
         data,
-        rows,
         rowsName,
-        columns,
         columnsName,
         minArea,
         maxArea
     } = props;
+
+    if(data === undefined || Object.entries(data).length === 0){
+        return <p>Loading data</p>
+    }
+
+    const rows = Object.keys(data);
+    const columns = Object.keys(data[rows[0]]);
 
     const maxForRow = (row) => max(Object.values(row));
 

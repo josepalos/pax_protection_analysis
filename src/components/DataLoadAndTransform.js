@@ -16,8 +16,8 @@ const fetchCountries = new Promise((resolve, reject) => {
     Promise.all([
         tsv('https://unpkg.com/world-atlas@1.1.4/world/110m.tsv'),
         json('https://unpkg.com/world-atlas@1.1.4/world/110m.json')
-    ]).then( ([tsvData, topoJSONdata]) => {
-        const countryData = tsvData.reduce( (acc, d) => {
+    ]).then(([tsvData, topoJSONdata]) => {
+        const countryData = tsvData.reduce((acc, d) => {
             let n_agreements = someData[d.name];
             acc[d.iso_n3] = {
                 name: d.name,
@@ -27,8 +27,8 @@ const fetchCountries = new Promise((resolve, reject) => {
         }, {});
 
         const countries = feature(topoJSONdata, topoJSONdata.objects.countries);
-        countries.features.forEach( (d) =>
-            Object.assign(d.properties, countryData[d.id] ) );
+        countries.features.forEach((d) =>
+            Object.assign(d.properties, countryData[d.id]));
         resolve(countries);
     });
 });
@@ -40,8 +40,8 @@ const fetchAgreements = new Promise((resolve, reject) => {
             "GInd", "GOth", "GRef", "GSoc"];
         const protections = ["Rhet", "Antid", "Subs", "Other"];
 
-        const protectionsForGrous = groups.map( (group) =>
-            protections.map( (p) => `${group}${p}`)
+        const protectionsForGrous = groups.map((group) =>
+            protections.map((p) => `${group}${p}`)
         ).flat();
 
         // TODO add variables of group+"Rhet", group+"Antid"...
@@ -52,10 +52,10 @@ const fetchAgreements = new Promise((resolve, reject) => {
         return Object.keys(d)
             .filter(key => attributesToReturn.includes(key))
             .reduce((obj, key) => {
-                if (groups.includes(key) || key === "HrNi" || protectionsForGrous.includes(key)){
+                if (groups.includes(key) || key === "HrNi" || protectionsForGrous.includes(key)) {
                     // Numeric attributes
                     obj[key] = +d[key];
-                }else if (key === "Dat")
+                } else if (key === "Dat")
                     obj.Year = new Date(d[key]).getFullYear();
                 else
                     obj[key] = d[key];
@@ -63,7 +63,7 @@ const fetchAgreements = new Promise((resolve, reject) => {
                 // Add aggregation variables
                 obj.rhetoricalCount = groups.reduce(
                     (count, group) => count + (+d[`${group}Rhet`] === 1 ? 1 : 0)
-                , 0);
+                    , 0);
                 obj.antiDiscriminationCount = groups.reduce(
                     (count, group) => count + (+d[`${group}Antid`] === 1 ? 1 : 0)
                     , 0);
@@ -85,9 +85,9 @@ const fetchAgreements = new Promise((resolve, reject) => {
 });
 
 const generalSort = (e1, e2) => {
-    if(e1.key < e2.key)
+    if (e1.key < e2.key)
         return -1;
-    else if(e1.key === e2.key)
+    else if (e1.key === e2.key)
         return 0;
     else
         return 1;
@@ -99,10 +99,10 @@ const countAggregator = (values) => {
 };
 
 const medianAggregator = (values) => {
-    if(values.length ===0) return 0;
+    if (values.length === 0) return 0;
 
-    values.sort(function(a,b){
-        return a-b;
+    values.sort(function (a, b) {
+        return a - b;
     });
 
     const half = Math.floor(values.length / 2);
@@ -111,28 +111,35 @@ const medianAggregator = (values) => {
     return (values[half - 1] + values[half]) / 2.0;
 };
 
-const aggregateElementsBy = (agreements, aggregator, by, attributesIf = undefined) => {
+const aggregateElementsBy = (agreements, aggregator, groupBy, aggregateField = undefined, attributesIf = undefined) => {
     const data = {};
-    agreements.forEach( (agreement) => {
-        const key = by(agreement);
-        if(!(key in data)){
+    agreements.forEach((agreement) => {
+        const key = groupBy(agreement);
+        if (!(key in data)) {
             data[key] = {key: key};
-            if(attributesIf === undefined){
+            if (attributesIf === undefined) {
                 data[key].values = [];
-            }else{
-                Object.keys(attributesIf).forEach( (attr) => {
-                   data[key][attr] = [];
+            } else {
+                Object.keys(attributesIf).forEach((attr) => {
+                    data[key][attr] = [];
                 });
             }
         }
 
-        if(attributesIf === undefined){
-            data[key].values.push(agreement);
-        }else{
-            for( let attr in attributesIf ){
+        if (attributesIf === undefined) {
+            if (aggregateField === undefined || aggregateField === null)
+                data[key].values.push(agreement);
+            else
+                data[key].values.push(aggregateField(agreement));
+
+        } else {
+            for (let attr in attributesIf) {
                 const ifFunc = attributesIf[attr];
-                if(ifFunc(agreement)){
-                    data[key][attr].push(agreement);
+                if (ifFunc(agreement)) {
+                    if (aggregateField === undefined || aggregateField === null)
+                        data[key][attr].push(agreement[attr]);
+                    else
+                        data[key][attr].push(aggregateField(agreement));
                 }
             }
         }
@@ -140,12 +147,12 @@ const aggregateElementsBy = (agreements, aggregator, by, attributesIf = undefine
 
     const dataList = Object.values(data).sort(generalSort);
 
-    return dataList.map( (element) => {
-        if(attributesIf === undefined)
+    return dataList.map((element) => {
+        if (attributesIf === undefined){
             return {key: element.key, value: aggregator(element.values)};
-        else{
+        }else {
             const item = {key: element.key};
-            Object.keys(attributesIf).forEach( (attr) => item[attr] = aggregator(element[attr]));
+            Object.keys(attributesIf).forEach((attr) => item[attr] = aggregator(element[attr]));
             return item;
         }
     });
