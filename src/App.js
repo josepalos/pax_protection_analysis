@@ -9,9 +9,9 @@ import {
     countAggregator
 } from './components/DataLoadAndTransform';
 
-import Overview from "./components/Overview";
-import DistributionAccordingToProtectionLevelView from "./components/DistributionAccordingToProtectionLevelView";
-import Relations from "./components/Relations";
+import Overview from "./components/Overview/Overview";
+import Distribution from "./components/Distribution/Distribution";
+import Relations from "./components/Relations/Relations";
 
 function App() {
     const tabs = [
@@ -20,7 +20,7 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 1;
+    const defaultTabIndex = 2;
 
     const [countries, setCountries] = useState({});
     const [agreements, setAgreements] = useState([]);
@@ -47,7 +47,7 @@ function App() {
                 />
             </TabPanel>
             <TabPanel>
-                <DistributionAccordingToProtectionLevelView
+                <Distribution
                     agreements={agreements}
                 />
             </TabPanel>

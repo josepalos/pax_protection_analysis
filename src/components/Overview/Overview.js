@@ -1,5 +1,5 @@
 import React from "react";
-import VerticalBarChart from "./VerticalBarChart/VerticalBarChart";
+import VerticalBarChart from "../VerticalBarChart/VerticalBarChart";
 import WorldMap from "./WorldMap/WorldMap";
 
 const Overview = ({years, countries}) => {

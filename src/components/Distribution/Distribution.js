@@ -1,8 +1,8 @@
 import React from "react";
 
-import SquaresTable from "./SquaresTable/SquaresTable";
-import VerticalGroupedBarChart from "./VerticalBarChart/VerticalGroupedBarChart";
-import { aggregateElementsBy, countAggregator, medianAggregator } from "./DataLoadAndTransform";
+import SquaresTable from "../SquaresTable/SquaresTable";
+import VerticalGroupedBarChart from "../VerticalBarChart/VerticalGroupedBarChart";
+import { aggregateElementsBy, countAggregator, medianAggregator } from "../DataLoadAndTransform";
 import TableWithCountAndMedian from "./TableWithCountAndMedian";
 
 function aggregateAgreementsProtectionsForGroupByLevel(agreements, group) {
@@ -46,7 +46,7 @@ function aggregateByConflictType(agreements, aggregator) {
     return data;
 }
 
-const DistributionAccordingToProtectionLevelView = ({agreements}) => {
+const Distribution = ({agreements}) => {
     const protectionsForGroupByLevel =
         aggregateAgreementsProtectionsForGroupByLevel(agreements, "GCh");
 
@@ -114,4 +114,4 @@ const DistributionAccordingToProtectionLevelView = ({agreements}) => {
         </div>)
 };
 
-export default DistributionAccordingToProtectionLevelView;
+export default Distribution;

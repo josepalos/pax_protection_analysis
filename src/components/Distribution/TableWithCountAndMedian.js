@@ -14,7 +14,6 @@ const TableWithCountAndMedian = (props) => {
     const rows = Object.keys(countData);
     const columns = Object.keys(countData[rows[0]]);
     const dataPerCell = 2;
-    console.log(medianData);
 
     // TODO remove border
     return (
