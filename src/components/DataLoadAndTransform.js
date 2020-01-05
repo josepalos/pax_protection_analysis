@@ -30,16 +30,17 @@ const fetchCountries = new Promise((resolve, reject) => {
     });
 });
 
-const fetchAgreements = new Promise((resolve, reject) => {
-    const agreements = [];
-    const levels = ["Rhet", "Antid", "Subs", "Other"];
-    const contp = ["Government", "Territory", "Government/territory", "Inter-group", "Other"];
-    const status = ["Multiparty signed/agreed", "Unilateral agreement", "Status unclear", "Agreement with Subsequent Status"]
-    const randItem = (list) => list[Math.floor(Math.random() * list.length)];
+const agreements = [];
+const con = ["Spain", "Mexico", "France", "Egypt", "Canada"];
+const levels = ["Rhet", "Antid", "Subs", "Other"];
+const contp = ["Government", "Territory", "Government/territory", "Inter-group", "Other"];
+const status = ["Multiparty signed/agreed", "Unilateral agreement", "Status unclear", "Agreement with Subsequent Status"]
+const randItem = (list) => list[Math.floor(Math.random() * list.length)];
 
+const fetchAgreements = new Promise((resolve, reject) => {
     for(let i = 0; i < 100; i++){
         agreements.push({
-            Con: "Spain",
+            Con: randItem(con),
             Contp: randItem(contp),
             AgtId: i,
             Agt: `Agreement ${i}`,
@@ -61,4 +62,27 @@ const fetchAgreements = new Promise((resolve, reject) => {
     resolve(agreements);
 });
 
-export { fetchCountries, fetchAgreements };
+const countAgreementsBy = (agreements, by) => {
+    const data = {};
+    agreements.forEach( (agreement) => {
+        const key = by(agreement);
+        if(!(key in data)){
+            data[key] = {key: key, count: 0};
+        }
+
+        data[key].count++;
+    });
+
+    const generalSort = (e1, e2) => {
+        if(e1.key < e2.key)
+            return -1;
+        else if(e1.key === e2.key)
+            return 0;
+        else
+            return 1;
+    };
+
+    return Object.values(data).sort(generalSort);
+};
+
+export { fetchCountries, fetchAgreements, countAgreementsBy };

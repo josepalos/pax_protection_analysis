@@ -2,21 +2,15 @@ import React, {useState} from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import {fetchCountries, fetchAgreements} from './components/DataLoadAndTransform';
+import {
+    fetchCountries,
+    fetchAgreements,
+    countAgreementsBy
+} from './components/DataLoadAndTransform';
+
 import Overview from "./components/Overview";
 import DistributionAccordingToProtectionLevelView from "./components/DistributionAccordingToProtectionLevelView";
 import Relations from "./components/Relations";
-
-const createYears = (minValue, maxValue) => {
-    const data = [];
-    for (let i = 1990; i <= 2019; i++) {
-        data.push({any: i, n: minValue + Math.floor(Math.random() * maxValue)});
-    }
-    return data;
-};
-const fetchYears = new Promise((resolve, reject) => {
-    resolve(createYears(0, 100));
-});
 
 const protectionLevels = {
     1990: {
@@ -66,15 +60,15 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 2;
+    const defaultTabIndex = 0;
 
     const [countries, setCountries] = useState({});
     const [agreements, setAgreements] = useState([]);
-    const [years, setYears] = useState([]);
 
     fetchCountries.then((data) => setCountries(data));
-    fetchYears.then((data) => setYears(data));
-    fetchAgreements.then((data) => setAgreements(data));
+    fetchAgreements.then((data) =>{
+        setAgreements(data);
+    });
 
     return (
         <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
@@ -86,8 +80,8 @@ function App() {
 
             <TabPanel>
                 <Overview
-                    years={years}
-                    countries={countries}
+                    years={countAgreementsBy(agreements, d => d.Dat)}
+                    countries={countries} // TODO extract from agreements
                 />
             </TabPanel>
             <TabPanel>
