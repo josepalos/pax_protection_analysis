@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 import {
     fetchCountries,
     fetchAgreements,
-    countAgreementsBy
+    aggregateElementsBy,
+    countAggregator
 } from './components/DataLoadAndTransform';
 
 import Overview from "./components/Overview";
@@ -25,16 +26,16 @@ function App() {
     const [agreements, setAgreements] = useState([]);
 
     fetchCountries.then((data) => setCountries(data));
-    fetchAgreements.then((data) =>{
+    fetchAgreements.then((data) => {
         setAgreements(data);
     });
 
-    const aggregatedYears = countAgreementsBy(agreements, d => d.Year);
+    const aggregatedYears = aggregateElementsBy(agreements, countAggregator, d => d.Year);
 
     return (
         <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
             <TabList>
-                {tabs.map( (tab, i) => (
+                {tabs.map((tab, i) => (
                     <Tab key={i}>{tab}</Tab>
                 ))}
             </TabList>

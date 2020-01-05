@@ -19,7 +19,7 @@ const Overview = ({years, countries}) => {
                         data={years}
                         xValue={d => d.key}
                         xLabel="Any"
-                        yValue={d => d.count}
+                        yValue={d => d.value}
                         yLabel="Nombre d'acords"
                         xAxisTickRotation="-55"
                     />

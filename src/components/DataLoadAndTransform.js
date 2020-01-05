@@ -94,35 +94,68 @@ const generalSort = (e1, e2) => {
         return 1;
 };
 
-const countAgreementsBy = (agreements, by, attributesIf = undefined) => {
+
+const countAggregator = (values) => {
+    return values.length;
+};
+
+const medianAggregator = (values) => {
+    if(values.length ===0) return 0;
+
+    values.sort(function(a,b){
+        return a-b;
+    });
+
+    const half = Math.floor(values.length / 2);
+    if (values.length % 2)
+        return values[half];
+    return (values[half - 1] + values[half]) / 2.0;
+};
+
+const aggregateElementsBy = (agreements, aggregator, by, attributesIf = undefined) => {
     const data = {};
     agreements.forEach( (agreement) => {
         const key = by(agreement);
         if(!(key in data)){
             data[key] = {key: key};
             if(attributesIf === undefined){
-                data[key].count = 0;
+                data[key].values = [];
             }else{
                 Object.keys(attributesIf).forEach( (attr) => {
-                    data[key][attr] = 0
+                   data[key][attr] = [];
                 });
             }
         }
 
         if(attributesIf === undefined){
-            data[key].count++;
+            data[key].values.push(agreement);
         }else{
             for( let attr in attributesIf ){
                 const ifFunc = attributesIf[attr];
                 if(ifFunc(agreement)){
-                    data[key][attr]++;
+                    data[key][attr].push(agreement);
                 }
             }
-
         }
     });
 
-    return Object.values(data).sort(generalSort);
+    const dataList = Object.values(data).sort(generalSort);
+
+    return dataList.map( (element) => {
+        if(attributesIf === undefined)
+            return {key: element.key, value: aggregator(element.values)};
+        else{
+            const item = {key: element.key};
+            Object.keys(attributesIf).forEach( (attr) => item[attr] = aggregator(element[attr]));
+            return item;
+        }
+    });
 };
 
-export { fetchCountries, fetchAgreements, countAgreementsBy };
+export {
+    fetchCountries,
+    fetchAgreements,
+    aggregateElementsBy,
+    countAggregator,
+    medianAggregator
+};

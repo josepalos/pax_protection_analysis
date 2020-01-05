@@ -1,9 +1,8 @@
 import React from "react";
-import {max} from 'd3';
 
 import SquaresTable from "./SquaresTable/SquaresTable";
 import VerticalGroupedBarChart from "./VerticalBarChart/VerticalGroupedBarChart";
-import {countAgreementsBy} from "./DataLoadAndTransform";
+import { aggregateElementsBy, countAggregator } from "./DataLoadAndTransform";
 
 const tableData = [
     ["Government/territory",
@@ -33,14 +32,14 @@ const tableData = [
         {n: 4, median: 4}]
 ];
 
-function aggregateAgreementsProtections(agreements, attribute) {
+function aggregateAgreementsProtectionsForGroupByLevel(agreements, group) {
     const attributesIf = {
-        "Rhetorical": d => d[attribute] === 1,
-        "Provisions": d => d[attribute] === 2,
-        "Substantive provisions": d => d[attribute] === 3
+        "Rhetorical": d => d[group] === 1,
+        "Provisions": d => d[group] === 2,
+        "Substantive provisions": d => d[group] === 3
     };
 
-    const p = countAgreementsBy(agreements, d => d.Year, attributesIf);
+    const p = aggregateElementsBy(agreements, countAggregator, d => d.Year, attributesIf);
     const data = {};
     p.forEach((d) => {
         data[d.key] = d;
@@ -49,24 +48,24 @@ function aggregateAgreementsProtections(agreements, attribute) {
 
     const columns = Object.keys(attributesIf);
     const rows = Object.keys(data);
-    return {data, columns, rows};
+    return {protectionsForGroupByLevel: data, columns, rows};
 }
 
 const DistributionAccordingToProtectionLevelView = ({agreements}) => {
-    const {data, columns, rows} = aggregateAgreementsProtections(agreements, "GCh");
+    const {protectionsForGroupByLevel, columns, rows} =
+        aggregateAgreementsProtectionsForGroupByLevel(agreements, "GCh");
+    console.log(protectionsForGroupByLevel);
 
-    const attrs = ["rhetoricalCount", "antiDiscriminationCount",
+    const levelsAttributes = ["rhetoricalCount", "antiDiscriminationCount",
         "substantiveCount", "otherProtectionsCount"];
-
-    const count = attrs.map(
+    const aggregateCountByProtectionLevel = levelsAttributes.map(
         (attr) => {
-            const count = countAgreementsBy(agreements, d => d[attr])
+            const count = aggregateElementsBy(agreements, countAggregator, d => d[attr])
                 .filter((d) => d.key !== 0);
             count.forEach((d) => d.attr = attr);
             return count;
         })
         .flat();
-    console.log(count);
 
     const innerDivStyle = {
         display: "table-cell",
@@ -78,7 +77,7 @@ const DistributionAccordingToProtectionLevelView = ({agreements}) => {
                 <div style={innerDivStyle}>
                     <SquaresTable
                         title={"Quantitat d'acords que estableixen els diferents nivells de protecció pels nens cada any"}
-                        data={data}
+                        data={protectionsForGroupByLevel}
                         rows={rows}
                         rowsName="Any de signatura"
                         columns={columns}
@@ -94,10 +93,10 @@ const DistributionAccordingToProtectionLevelView = ({agreements}) => {
                         width="800"
                         height="500"
                         margin={{top: 50, right: 200, bottom: 80, left: 70}}
-                        data={count}
+                        data={aggregateCountByProtectionLevel}
                         xValue={group => group.key}
                         xLabel="Número de grups protegits"
-                        yValue={group => group.count}
+                        yValue={group => group.value}
                         yLabel="Número d'acords"
                         groupBy={group => group.attr}
                         groupByAbbreviation={{
