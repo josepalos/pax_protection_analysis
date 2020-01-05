@@ -71,9 +71,8 @@ const fetchAgreements = new Promise((resolve, reject) => {
                     (count, group) => count + (+d[`${group}Subs`] === 1 ? 1 : 0)
                     , 0);
                 obj.otherProtectionsCount = groups.reduce(
-                    (count, group) => count + (+d[`${group}Other`] === 1 ? 1 : 0)
+                    (count, group) => count + (+d[`${group}Oth`] === 1 ? 1 : 0)
                     , 0);
-                // TODO
 
                 return obj;
             }, {})
