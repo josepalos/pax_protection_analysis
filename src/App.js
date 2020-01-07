@@ -3,10 +3,10 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 import {
-    fetchCountries,
+    fetchCountriesData,
     fetchAgreements,
     aggregateElementsBy,
-    countAggregator
+    countAggregator, countCountryInvolvements
 } from './components/DataLoadAndTransform';
 
 import Overview from "./components/Overview/Overview";
@@ -20,17 +20,18 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 2;
+    const defaultTabIndex = 0;
 
-    const [countries, setCountries] = useState({});
+    const [countriesFeatures, setCountriesFeatures] = useState({});
     const [agreements, setAgreements] = useState([]);
 
-    fetchCountries.then((data) => setCountries(data));
+    fetchCountriesData.then((data) => setCountriesFeatures(data));
     fetchAgreements.then((data) => {
         setAgreements(data);
     });
 
     const aggregatedYears = aggregateElementsBy(agreements, countAggregator, d => d.Year);
+    const countriesCount = countCountryInvolvements(agreements);
 
     return (
         <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
@@ -42,8 +43,9 @@ function App() {
 
             <TabPanel>
                 <Overview
-                    years={aggregatedYears}
-                    countries={countries} // TODO extract from agreements
+                    yearlyCount={aggregatedYears}
+                    countriesCount={countriesCount}
+                    countriesFeatures={countriesFeatures}
                 />
             </TabPanel>
             <TabPanel>

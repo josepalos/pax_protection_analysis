@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {createRef, useEffect} from 'react';
 import {
     select,
     geoPath,
@@ -9,42 +9,55 @@ import {
 } from 'd3';
 import styles from './WorldMap.module.css';
 
+const WorldMap = (props) => {
+    const {
+        width,
+        height,
+        countriesCount,
+        countriesFeatures,
+        noDataFill = "lightgrey",
+        projection = geoMercator()
+    } = props;
 
-const WorldMap = ( { width, height, countries } ) => {
-    const colorValue = d => d.properties.agreements;
+    const colorValue = d => countriesCount[d.properties.name] || 0;
     const getCountryTitle = d => d.properties.name + ": " + colorValue(d);
+    const pathGenerator = geoPath()
+        .projection(projection);
 
-    const projection = geoMercator();
-    const pathGenerator = geoPath().projection(projection);
-    const colorScale = scaleSequential();
+    const svgRef = createRef();
 
-    const renderMap = (svg) => {
-        colorScale
+    const renderMap = (selection, props) => {
+        const colorScale = scaleSequential()
             .interpolator(interpolateReds)
-            .domain([0, max(countries.features, colorValue)]);
+            .domain([0, max(countriesFeatures, colorValue)]);
 
-        svg.selectAll("path").data(countries.features)
-            .enter().append("path")
-                .attr("class", styles.country)
-                .attr("d", pathGenerator)
-                .attr("fill", d => colorValue(d) === 0 ? "lightgrey" : colorScale(colorValue(d)))
+        const paths = selection.selectAll(styles.country)
+            .data(countriesFeatures);
+        paths.enter().append("path")
+            .merge(paths)
+            .attr("class", styles.country)
+            .attr("d", pathGenerator)
+            .attr("fill", d => colorValue(d) === 0 ? noDataFill : colorScale(colorValue(d)))
             .append("title")
-                .text(getCountryTitle);
+            .text(getCountryTitle);
     };
 
-    useEffect( () => {
-        if(Object.entries(countries).length === 0 && countries.constructor === Object){
-            console.log("Loading map data");
-        }else{
-            console.log("Loaded map data");
-            const svg = select('#world-map');
-            renderMap(svg);
+    useEffect(() => {
+        if (Object.entries(countriesFeatures).length === 0) {
+            console.log("Loading map features...");
+        } else if (countriesCount.length === 0) {
+            console.log("Loading count data...");
+        } else {
+            console.log("Loaded data");
+            select(svgRef.current)
+                .call(renderMap, {});
+
         }
     });
 
     return (
         <div>
-            <svg id="world-map"
+            <svg ref={svgRef}
                  className={styles.world_map}
                  width={width}
                  height={height}

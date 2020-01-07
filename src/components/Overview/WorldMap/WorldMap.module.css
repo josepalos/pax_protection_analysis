@@ -8,6 +8,6 @@
 }
 
 .country:hover {
-    fill: red;
+    fill: orange;
     stroke-width: 2px;
 }

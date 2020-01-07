@@ -4,24 +4,14 @@ import {feature} from 'topojson';
 const datasetUrl = "/data/pax_all_agreements_data.csv";
 
 
-const someData = {
-    "Spain": 10,
-    "Mexico": 30,
-    "France": 5,
-    "Egypt": 1,
-    "Canada": 100
-};
-
-const fetchCountries = new Promise((resolve, reject) => {
+const fetchCountriesData = new Promise((resolve, reject) => {
     Promise.all([
         tsv('https://unpkg.com/world-atlas@1.1.4/world/110m.tsv'),
         json('https://unpkg.com/world-atlas@1.1.4/world/110m.json')
     ]).then(([tsvData, topoJSONdata]) => {
         const countryData = tsvData.reduce((acc, d) => {
-            let n_agreements = someData[d.name];
             acc[d.iso_n3] = {
                 name: d.name,
-                agreements: n_agreements === undefined ? 0 : n_agreements
             };
             return acc;
         }, {});
@@ -29,7 +19,7 @@ const fetchCountries = new Promise((resolve, reject) => {
         const countries = feature(topoJSONdata, topoJSONdata.objects.countries);
         countries.features.forEach((d) =>
             Object.assign(d.properties, countryData[d.id]));
-        resolve(countries);
+        resolve(countries.features);
     });
 });
 
@@ -93,7 +83,6 @@ const generalSort = (e1, e2) => {
         return 1;
 };
 
-
 const countAggregator = (values) => {
     return values.length;
 };
@@ -148,9 +137,9 @@ const aggregateElementsBy = (agreements, aggregator, groupBy, aggregateField = u
     const dataList = Object.values(data).sort(generalSort);
 
     return dataList.map((element) => {
-        if (attributesIf === undefined){
+        if (attributesIf === undefined) {
             return {key: element.key, value: aggregator(element.values)};
-        }else {
+        } else {
             const item = {key: element.key};
             Object.keys(attributesIf).forEach((attr) => item[attr] = aggregator(element[attr]));
             return item;
@@ -158,10 +147,41 @@ const aggregateElementsBy = (agreements, aggregator, groupBy, aggregateField = u
     });
 };
 
+// Match the names of the countries to the countries feature namings.
+const namesMappings = {
+    "Central African Republic": "Central African Rep.",
+    "Democratic Republic of Congo": "Dem. Rep. Congo",
+    "North Korea": "Dem. Rep. Korea",
+    "South Korea": "Korea",
+    "Republic of Congo": "Dem. Rep. Congo",
+    "United States of America": "United States",
+};
+
+const countCountryInvolvements = (agreements) => {
+    const aggregated = aggregateElementsBy(agreements, countAggregator, d => d.Con);
+    const countriesCount = {};
+
+    aggregated.forEach((d) => {
+        const involvedCountries = d.key.split("/");
+        if (involvedCountries.length > 1) {
+            involvedCountries.forEach((country) => {
+                const countryName = namesMappings[country] || country;
+                countriesCount[countryName] = d.value + (countriesCount[countryName] || 0);
+            })
+        } else {
+            const countryName = namesMappings[d.key] || d.key;
+            countriesCount[countryName] = d.value + (countriesCount[countryName] || 0);
+        }
+    });
+
+    return countriesCount;
+};
+
 export {
-    fetchCountries,
+    fetchCountriesData,
     fetchAgreements,
     aggregateElementsBy,
     countAggregator,
-    medianAggregator
+    medianAggregator,
+    countCountryInvolvements
 };
