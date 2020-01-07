@@ -1,64 +1,23 @@
-import React, { useState } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import React, {useState} from 'react';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import "./styles.css"
 
 import {
-    fetchCountriesData,
-    fetchAgreements,
+    aggregateByConflictType,
     aggregateElementsBy,
+    aggregateProtectionsByYearAndLevel,
     countAggregator,
     countCountryInvolvements,
+    fetchAgreements,
+    fetchCountriesData,
+    levelsAttributes,
     medianAggregator
 } from './components/DataLoadAndTransform';
 
 import Overview from "./components/Overview";
 import Distribution from "./components/Distribution";
 import Relations from "./components/Relations/Relations";
-
-function aggregateProtectionsByYearAndLevel(agreements, group) {
-    const attributesIf = {
-        "Rhetorical": d => d[group] === 1,
-        "Provisions": d => d[group] === 2,
-        "Substantive provisions": d => d[group] === 3
-    };
-
-    const p = aggregateElementsBy(
-        agreements,
-        countAggregator,
-        d => d.Year,
-        null,
-        attributesIf);
-    const data = {};
-    p.forEach((d) => {
-        data[d.key] = d;
-        delete data[d.key].key;
-    });
-    return data;
-}
-
-function aggregateByConflictType(agreements, aggregator) {
-    const aggregateByType = aggregateElementsBy(
-        agreements,
-        aggregator,
-        d => d.Contp,
-        null,
-        {
-            "rhetoricalCount": d => d.rhetoricalCount > 0,
-            "antiDiscriminationCount": d => d.antiDiscriminationCount > 0,
-            "substantiveCount": d => d.substantiveCount > 0,
-            "otherProtectionsCount": d => d.otherProtectionsCount > 0
-        });
-    const data = {};
-    aggregateByType.forEach((d) => {
-        data[d.key] = d;
-        delete data[d.key].key;
-    });
-    return data;
-}
-
-const levelsAttributes = ["rhetoricalCount", "antiDiscriminationCount",
-    "substantiveCount", "otherProtectionsCount"];
 
 
 function App() {

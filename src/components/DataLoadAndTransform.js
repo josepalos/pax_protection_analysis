@@ -3,8 +3,11 @@ import {feature} from 'topojson';
 
 const datasetUrl = "/data/pax_all_agreements_data.csv";
 
+const levelsAttributes = ["rhetoricalCount", "antiDiscriminationCount",
+    "substantiveCount", "otherProtectionsCount"];
 
-const fetchCountriesData = new Promise((resolve, reject) => {
+
+const fetchCountriesData = new Promise((resolve) => {
     Promise.all([
         tsv('https://unpkg.com/world-atlas@1.1.4/world/110m.tsv'),
         json('https://unpkg.com/world-atlas@1.1.4/world/110m.json')
@@ -23,7 +26,7 @@ const fetchCountriesData = new Promise((resolve, reject) => {
     });
 });
 
-const fetchAgreements = new Promise((resolve, reject) => {
+const fetchAgreements = new Promise((resolve) => {
 
     const parseCsv = (d) => {
         const groups = ["GCh", "GDis", "GAge", "GMig", "GRa", "GRe",
@@ -177,11 +180,56 @@ const countCountryInvolvements = (agreements) => {
     return countriesCount;
 };
 
+const aggregateProtectionsByYearAndLevel = (agreements, group) => {
+    const attributesIf = {
+        "Rhetorical": d => d[group] === 1,
+        "Provisions": d => d[group] === 2,
+        "Substantive provisions": d => d[group] === 3
+    };
+
+    const p = aggregateElementsBy(
+        agreements,
+        countAggregator,
+        d => d.Year,
+        null,
+        attributesIf);
+    const data = {};
+    p.forEach((d) => {
+        data[d.key] = d;
+        delete data[d.key].key;
+    });
+    return data;
+};
+
+const aggregateByConflictType = (agreements, aggregator) => {
+    const aggregateByType = aggregateElementsBy(
+        agreements,
+        aggregator,
+        d => d.Contp,
+        null,
+        {
+            "rhetoricalCount": d => d.rhetoricalCount > 0,
+            "antiDiscriminationCount": d => d.antiDiscriminationCount > 0,
+            "substantiveCount": d => d.substantiveCount > 0,
+            "otherProtectionsCount": d => d.otherProtectionsCount > 0
+        });
+    const data = {};
+    aggregateByType.forEach((d) => {
+        data[d.key] = d;
+        delete data[d.key].key;
+    });
+    return data;
+};
+
+
 export {
     fetchCountriesData,
     fetchAgreements,
     aggregateElementsBy,
     countAggregator,
     medianAggregator,
-    countCountryInvolvements
+    countCountryInvolvements,
+    aggregateByConflictType,
+    aggregateProtectionsByYearAndLevel,
+    levelsAttributes
 };
