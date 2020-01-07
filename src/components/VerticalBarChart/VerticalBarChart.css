@@ -22,8 +22,3 @@
     font-weight: bold;
     text-anchor: middle;
 }
-
-.legend rect {
-    fill: lightgrey;
-    opacity: .1;
-}

@@ -106,7 +106,9 @@ const VerticalGroupedBarChart = (props) => {
             .attr("x", (d) => xScale(xValue(d)) + subXScale(groupBy(d)))
             .attr("width", subXScale.bandwidth())
             .attr("y", (d) => yScale(yValue(d)))
-            .attr("height", (d) => innerHeight - yScale(yValue(d)));
+            .attr("height", (d) => innerHeight - yScale(yValue(d)))
+            .append("title")
+            .text(d => yValue(d));
 
         // Set legend
         const legendG = selection.selectAll(".legend").data([null]);

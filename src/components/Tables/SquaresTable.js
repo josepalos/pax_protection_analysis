@@ -1,6 +1,48 @@
-import React from 'react';
-import { max, scaleSqrt } from 'd3';
+import React, {createRef, useEffect} from 'react';
+import { select, max, scaleSqrt } from 'd3';
 import styles from "./Tables.module.css";
+
+const sizeLegend = (selection, props) => {
+    const {
+        scale,
+        spacing,
+        numTicks,
+        textOffset,
+        legendWidth
+    } = props;
+
+    const ticks = scale.ticks(numTicks)
+        .filter(d => d !== 0)
+        .reverse();
+
+    selection.append("rect")
+        .attr("class", "background-rect")
+        .attr("rx", 10)
+        .attr("width", legendWidth)
+        .attr("height", ticks.length * spacing + 10);
+
+    const groups = selection.selectAll(".legend-items").data(ticks);
+    const groupsEnter = groups
+        .enter().append("g")
+        .attr("class", "legend-items");
+    groupsEnter
+        .merge(groups)
+        .attr("transform", (d, i) => `translate(10, ${(i+.5) * spacing })`);
+    groups.exit().remove();
+
+    groupsEnter.append("rect")
+        .attr("class", styles.content_rect)
+        .merge(groups.select(styles.content_rect))
+        .attr("height", scale)
+        .attr("width", scale);
+
+    groupsEnter.append("text")
+        .merge(groups.select("text"))
+        .text(d => d)
+        .attr("dy", ".32em")
+        .attr("y", "10")
+        .attr("x", d => scale(d) + textOffset);
+};
 
 const SquaresTable = (props) => {
     const {
@@ -12,16 +54,9 @@ const SquaresTable = (props) => {
         maxArea
     } = props;
 
-    if(data === undefined || Object.entries(data).length === 0){
-        return <p>Loading data</p>
-    }
-
-    const rows = Object.keys(data);
-    const columns = Object.keys(data[rows[0]]);
-
+    const legendRef = createRef();
     const maxForRow = (row) => max(Object.values(row));
-
-    var cellsScale = scaleSqrt()
+    const cellsScale = scaleSqrt()
         .domain([0, max(Object.values(data), maxForRow)])
         .range([minArea, maxArea]);
 
@@ -34,7 +69,7 @@ const SquaresTable = (props) => {
         return (
             <td key={i}>
                 <svg width={size} height={size}>
-                    <rect width={size} height={size}/>
+                    <rect width={size} height={size} className={styles.content_rect}/>
                     <title>{value}</title>
                 </svg>
             </td>
@@ -52,9 +87,31 @@ const SquaresTable = (props) => {
         )
     };
 
+    useEffect( () => {
+        if(legendRef.current !== null) {
+            select(legendRef.current)
+                .call(sizeLegend, {
+                    scale: cellsScale,
+                    spacing: 30,
+                    numTicks: 5,
+                    textOffset: 10,
+                    legendWidth: 100
+                });
+        }
+    });
+
+    if(data === undefined || Object.entries(data).length === 0){
+        return <p>Loading data</p>
+    }
+
+    const rows = Object.keys(data);
+    const columns = Object.keys(data[rows[0]]);
+
     return (
         <div>
-            <span className="chart-title">{title}</span>
+            <div className="chart-title">
+                {title}
+            </div>
             <div className="div-table">
                 <div className="div-table-row">
                     <div className="div-table-cell">
@@ -78,7 +135,11 @@ const SquaresTable = (props) => {
                         </table>
                     </div>
                     <div className="div-table-cell">
-                        LEGEND
+                        <svg ref={legendRef}
+                            className="legend"
+                            width={150}
+                            height={200}>
+                        </svg>
                     </div>
                 </div>
             </div>

@@ -37,7 +37,9 @@ const TableWithCountAndMedian = (props) => {
 
     return (
         <div>
-            <span className="chart-title">{title}</span>
+            <div className="chart-title">
+                {title}
+            </div>
             <table className={styles.content_table}>
                 <thead>
                 <tr>

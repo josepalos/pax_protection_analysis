@@ -4,7 +4,7 @@ import WorldMap from "./WorldMap/WorldMap";
 
 const Overview = ({yearlyCount, countriesCount, countriesFeatures}) => {
     return (
-        <div className="div-table">
+        <div className="div-table tab-content">
             <div className="div-table-row">
                 <div className="div-table-cell">
                     <VerticalBarChart
@@ -21,6 +21,7 @@ const Overview = ({yearlyCount, countriesCount, countriesFeatures}) => {
                 </div>
                 <div className="div-table-cell">
                     <WorldMap
+                        title="Quantitat d'acords en els que un país està involucract"
                         width="960"
                         height="500"
                         countriesCount={countriesCount}

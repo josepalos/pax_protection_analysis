@@ -11,6 +11,7 @@ import styles from './WorldMap.module.css';
 
 const WorldMap = (props) => {
     const {
+        title,
         width,
         height,
         countriesCount,
@@ -57,6 +58,9 @@ const WorldMap = (props) => {
 
     return (
         <div>
+            <div className="chart-title">
+                {title}
+            </div>
             <svg ref={svgRef}
                  className={styles.world_map}
                  width={width}

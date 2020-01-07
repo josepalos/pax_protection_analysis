@@ -14,7 +14,7 @@ const Distribution = (props) => {
     } = props;
 
     return (
-        <div className="div-table">
+        <div className="div-table tab-content">
             <div className="div-table-row">
                 <div className="div-table-cell">
                     <SquaresTable
@@ -32,7 +32,7 @@ const Distribution = (props) => {
                         title="Quantitat de grups protegits segons el nivell i acord"
                         width="800"
                         height="500"
-                        margin={{top: 50, right: 200, bottom: 80, left: 70}}
+                        margin={{top: 50, right: 250, bottom: 80, left: 70}}
                         data={countByProtectionLevel}
                         xValue={group => group.key}
                         xLabel="Número de grups protegits"
@@ -47,7 +47,8 @@ const Distribution = (props) => {
                         }}
                     />
                 </div>
-
+            </div>
+            <div className="div-table-row">
                 <div className="div-table-cell">
                     <TableWithCountAndMedian
                         title={"Protecció cap als grups segons el tipus de conflicte"}

@@ -9,6 +9,7 @@ const colorLegend = (selection, props) => {
     } = props;
 
     selection.append("rect")
+        .attr("class", "background-rect")
         .attr("rx", radius)
         .attr("width", legendWidth)
         .attr("height", colorScale.domain().length * spacing);

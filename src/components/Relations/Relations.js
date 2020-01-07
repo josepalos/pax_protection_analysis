@@ -24,7 +24,7 @@ const Relations = ({agreements}) => {
     };
 
     return (
-        <div className="div-table">
+        <div className="div-table tab-content">
             <div className="div-table-row">
                 <div className="div-table-cell">
                     <RelationBetweenGroups

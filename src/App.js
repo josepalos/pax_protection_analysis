@@ -68,7 +68,7 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 1;
+    const defaultTabIndex = 2;
 
     const [countriesFeatures, setCountriesFeatures] = useState({});
     const [agreements, setAgreements] = useState([]);

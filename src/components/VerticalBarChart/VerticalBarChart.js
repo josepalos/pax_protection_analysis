@@ -87,7 +87,9 @@ const VerticalBarChart = (props) => {
             .attr("x", xPos)
             .attr("width", barWidth)
             .attr("y", yPos)
-            .attr("height", barHeight);
+            .attr("height", barHeight)
+            .append("title")
+            .text(d => yValue(d));
     };
 
     useEffect(() => {
