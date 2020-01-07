@@ -1,17 +1,65 @@
 import React, { useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import "./styles.css"
 
 import {
     fetchCountriesData,
     fetchAgreements,
     aggregateElementsBy,
-    countAggregator, countCountryInvolvements
+    countAggregator,
+    countCountryInvolvements,
+    medianAggregator
 } from './components/DataLoadAndTransform';
 
-import Overview from "./components/Overview/Overview";
-import Distribution from "./components/Distribution/Distribution";
+import Overview from "./components/Overview";
+import Distribution from "./components/Distribution";
 import Relations from "./components/Relations/Relations";
+
+function aggregateProtectionsByYearAndLevel(agreements, group) {
+    const attributesIf = {
+        "Rhetorical": d => d[group] === 1,
+        "Provisions": d => d[group] === 2,
+        "Substantive provisions": d => d[group] === 3
+    };
+
+    const p = aggregateElementsBy(
+        agreements,
+        countAggregator,
+        d => d.Year,
+        null,
+        attributesIf);
+    const data = {};
+    p.forEach((d) => {
+        data[d.key] = d;
+        delete data[d.key].key;
+    });
+    return data;
+}
+
+function aggregateByConflictType(agreements, aggregator) {
+    const aggregateByType = aggregateElementsBy(
+        agreements,
+        aggregator,
+        d => d.Contp,
+        null,
+        {
+            "rhetoricalCount": d => d.rhetoricalCount > 0,
+            "antiDiscriminationCount": d => d.antiDiscriminationCount > 0,
+            "substantiveCount": d => d.substantiveCount > 0,
+            "otherProtectionsCount": d => d.otherProtectionsCount > 0
+        });
+    const data = {};
+    aggregateByType.forEach((d) => {
+        data[d.key] = d;
+        delete data[d.key].key;
+    });
+    return data;
+}
+
+const levelsAttributes = ["rhetoricalCount", "antiDiscriminationCount",
+    "substantiveCount", "otherProtectionsCount"];
+
 
 function App() {
     const tabs = [
@@ -20,7 +68,7 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 0;
+    const defaultTabIndex = 1;
 
     const [countriesFeatures, setCountriesFeatures] = useState({});
     const [agreements, setAgreements] = useState([]);
@@ -32,6 +80,18 @@ function App() {
 
     const aggregatedYears = aggregateElementsBy(agreements, countAggregator, d => d.Year);
     const countriesCount = countCountryInvolvements(agreements);
+
+    const protectionsForGroupByYearAndLevel = aggregateProtectionsByYearAndLevel(agreements, "GCh");
+    const countByProtectionLevel = levelsAttributes.map(
+        (attr) => {
+            const count = aggregateElementsBy(agreements, countAggregator, d => d[attr])
+                .filter((d) => d.key !== 0);
+            count.forEach((d) => d.attr = attr);
+            return count;
+        })
+        .flat();
+    const conflictTypeCount = aggregateByConflictType(agreements, countAggregator);
+    const conflictTypeMedian = aggregateByConflictType(agreements, medianAggregator);
 
     return (
         <Tabs forceRenderTabPanel={true} defaultIndex={defaultTabIndex}>
@@ -51,6 +111,10 @@ function App() {
             <TabPanel>
                 <Distribution
                     agreements={agreements}
+                    protectionsForGroupByYearAndLevel={protectionsForGroupByYearAndLevel}
+                    countByProtectionLevel={countByProtectionLevel}
+                    conflictTypeCount={conflictTypeCount}
+                    conflictTypeMedian={conflictTypeMedian}
                 />
             </TabPanel>
             <TabPanel>

@@ -2,12 +2,6 @@
     font-family: sans-serif;
 }
 
-.bar-chart .chart-title {
-    font-size: 1.5em;
-    font-weight: bold;
-    text-anchor: middle;
-}
-
 .bar-chart rect.no-group {
     fill: steelblue;
 }

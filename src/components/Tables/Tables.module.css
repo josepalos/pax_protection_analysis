@@ -1,0 +1,35 @@
+.content_table {
+    border: solid 1px;
+    border-collapse: collapse;
+}
+
+.content_table th, .content_table tr {
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.content_table th {
+    border-bottom: solid 1px;
+    border-collapse: collapse;
+    border-right: solid 1px;
+    border-left: solid 1px;
+    background: lightgray;
+}
+
+.content_table rect {
+    fill: steelblue;
+}
+
+.content_table .row_label {
+    border-right: solid 1px;
+    border-collapse: collapse;
+}
+
+.even_row td {
+    background: #e1e1e1;
+}
+
+.odd_row td {
+    background: white;
+}

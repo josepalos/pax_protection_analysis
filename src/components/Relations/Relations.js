@@ -24,9 +24,9 @@ const Relations = ({agreements}) => {
     };
 
     return (
-        <div style={{display: "table"}}>
-            <div style={{display: "table-row"}}>
-                <div style={{display: "table-cell"}}>
+        <div className="div-table">
+            <div className="div-table-row">
+                <div className="div-table-cell">
                     <RelationBetweenGroups
                         data={agreements}
                         possibleOptions={possibleOptions}
@@ -36,7 +36,7 @@ const Relations = ({agreements}) => {
                         onYChange={handleYSelectorChange}
                     />
                 </div>
-                <div style={{display: "table-cell"}}>
+                <div className="div-table-cell">
                     <RelationBetweenGroupAndHrNi
                         data={agreements}
                         possibleOptions={possibleOptions}

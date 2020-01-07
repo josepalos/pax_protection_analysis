@@ -26,7 +26,7 @@ const WorldMap = (props) => {
 
     const svgRef = createRef();
 
-    const renderMap = (selection, props) => {
+    const renderMap = (selection) => {
         const colorScale = scaleSequential()
             .interpolator(interpolateReds)
             .domain([0, max(countriesFeatures, colorValue)]);

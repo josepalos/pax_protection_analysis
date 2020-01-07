@@ -1,17 +1,12 @@
 import React from "react";
-import VerticalBarChart from "../VerticalBarChart/VerticalBarChart";
+import VerticalBarChart from "./VerticalBarChart/VerticalBarChart";
 import WorldMap from "./WorldMap/WorldMap";
 
 const Overview = ({yearlyCount, countriesCount, countriesFeatures}) => {
-    const innerDivStyle = {
-        display: "table-cell",
-        verticalAlign: "top",
-    };
-
     return (
-        <div style={{display: "table"}}>
-            <div style={{display: "table-row"}}>
-                <div style={innerDivStyle}>
+        <div className="div-table">
+            <div className="div-table-row">
+                <div className="div-table-cell">
                     <VerticalBarChart
                         title="Quantitat d'acords signats cada any"
                         width="800"
@@ -24,7 +19,7 @@ const Overview = ({yearlyCount, countriesCount, countriesFeatures}) => {
                         xAxisTickRotation="-55"
                     />
                 </div>
-                <div style={innerDivStyle}>
+                <div className="div-table-cell">
                     <WorldMap
                         width="960"
                         height="500"

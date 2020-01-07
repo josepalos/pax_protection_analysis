@@ -5,10 +5,9 @@ import {
     select,
     scaleLinear,
     max,
-    scaleBand,
-    axisLeft,
-    axisBottom
+    scaleBand
 } from 'd3';
+import { XAxis, YAxis } from "./Axis";
 
 const VerticalBarChart = (props) => {
     const {
@@ -63,43 +62,23 @@ const VerticalBarChart = (props) => {
             .text(title);
 
         // Set axis
-        const yAxis = axisLeft(yScale)
-            .ticks(8)
-            .tickSize(-innerWidth);
-        const yAxisG = innerG.select(".y-axis");
-        const yAxisGEnter = innerGEnter.append('g')
-            .attr("class", "y-axis");
-        yAxisG.merge(yAxisGEnter)
-            .call(yAxis)
-            .selectAll(".domain").remove(); // Remove the vertical axis' bar
-        yAxisGEnter
-            .append("text")
-            .attr("class", "axis-label")
-            .attr("y", -30)
-            .attr("transform", "rotate(-90)")
-            .merge(yAxisG.select(".axis-label"))
-            .attr("x", -innerHeight / 2)
-            .text(yLabel);
+        innerGEnter.call(YAxis, {
+            scale: yScale,
+            ticks: 8,
+            width: innerWidth,
+            height: innerHeight,
+            label: yLabel
+        });
 
-        const xAxisG = innerG.select(".x-axis");
-        const xAxisGEnter = innerGEnter.append('g')
-            .attr("class", "x-axis");
-        xAxisG.merge(xAxisGEnter)
-            .call(axisBottom(xScale))
-            .attr("transform", `translate(0, ${innerHeight})`)
-            .selectAll(".domain, .tick line").remove();
-        xAxisGEnter.selectAll(".tick text")
-            .attr("transform", `translate(-18, 18) rotate(${xAxisTickRotation})`);
-        xAxisGEnter
-            .append("text")
-            .attr("class", "axis-label")
-            .attr("y", 70)
-            .merge(xAxisG.select(".axis-label"))
-            .attr("x", innerWidth / 2)
-            .text(xLabel);
+        innerGEnter.call(XAxis, {
+            scale: xScale,
+            width: innerWidth,
+            height: innerHeight,
+            tickRotation: xAxisTickRotation,
+            label: xLabel
+        });
 
         // Set bars
-
         const bars = innerGEnter.selectAll("rect").data(data);
         bars.enter()
             .append("rect")
