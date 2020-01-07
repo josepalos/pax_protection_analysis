@@ -1,13 +1,34 @@
 import React from "react";
 import DiscretePointPlot from "../ScatterPlot/DiscretePointPlot";
 import Selector from "./Selector";
+import styles from "./Relations.module.css"
 
-const RelationBetweenGroups = ({data, possibleOptions, selectedX, onXChange, selectedY, onYChange}) => {
+const RelationBetweenGroups = (props) => {
+    const {
+        data,
+        possibleOptions,
+        selectedX,
+        onXChange,
+        selectedY,
+        onYChange,
+        width,
+        height
+    } = props;
     return (
         <>
-            <div style={{display: "table", borderSpacing: "10px"}}>
-                <div style={{display: "table-row"}}>
-                    <div style={{display: "table-cell"}}>
+            <DiscretePointPlot
+                data={data}
+                title={"Relació entre " + selectedX + " i " + selectedY}
+                width={width}
+                height={height}
+                getXDim={(d) => d[selectedX]}
+                xLabel={selectedX}
+                getYDim={(d) => d[selectedY]}
+                yLabel={selectedY}
+            />
+            <div className={`div-table ${styles.selector_table}`}>
+                <div className="div-table-row">
+                    <div className="div-table-cell">
                         Eix X:
                         <Selector
                             value={selectedX}
@@ -25,16 +46,6 @@ const RelationBetweenGroups = ({data, possibleOptions, selectedX, onXChange, sel
                     </div>
                 </div>
             </div>
-            <DiscretePointPlot
-                data={data}
-                title={"Relació entre " + selectedX + " i " + selectedY}
-                width="400"
-                height="400"
-                getXDim={(d) => d[selectedX]}
-                xLabel={selectedX}
-                getYDim={(d) => d[selectedY]}
-                yLabel={selectedY}
-            />
         </>
     )
 };

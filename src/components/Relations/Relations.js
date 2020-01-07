@@ -34,6 +34,8 @@ const Relations = ({agreements}) => {
                         onXChange={handleXSelectorChange}
                         selectedY={selectedY}
                         onYChange={handleYSelectorChange}
+                        width={700}
+                        height={700}
                     />
                 </div>
                 <div className="div-table-cell">
@@ -42,6 +44,8 @@ const Relations = ({agreements}) => {
                         possibleOptions={possibleOptions}
                         selectedGroup={selectedGroup}
                         onGroupChange={handleGroupSelectorChange}
+                        width={700}
+                        height={700}
                     />
                 </div>
             </div>

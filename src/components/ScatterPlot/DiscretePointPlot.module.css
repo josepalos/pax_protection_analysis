@@ -1,0 +1,14 @@
+.axis_label{
+    fill: black;
+    font-size: 1.8em;
+    text-anchor: middle;
+}
+
+.circles {
+    fill: steelblue;
+}
+
+.bounding_box {
+    stroke: black;
+    fill: none;
+}

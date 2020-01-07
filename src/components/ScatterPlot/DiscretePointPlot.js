@@ -1,4 +1,5 @@
 import React, {createRef, useEffect} from "react";
+import styles from './DiscretePointPlot.module.css';
 
 import {
     select,
@@ -8,6 +9,43 @@ import {
     axisBottom,
     axisLeft
 } from 'd3';
+
+const xAxis = (selection, {scale, height, width, label}) => {
+    const axis = axisBottom(scale);
+
+    const axisG = selection.select(".x-axis");
+    const axisGEnter = selection.append("g")
+        .attr("class", "x-axis");
+    axisGEnter.merge(axisG)
+        .call(axis)
+        .attr("transform", `translate(0, ${height})`)
+        .selectAll(".domain").remove();
+
+    axisGEnter.append("text")
+        .attr("class", styles.axis_label)
+        .merge(axisG.select(`.${styles.axis_label}`))
+        .attr("x", width / 2)
+        .attr("y", 30)
+        .text(label);
+};
+
+const yAxis = (selection, {scale, height, label}) => {
+    const axis = axisLeft(scale);
+
+    const axisG = selection.select(".y-axis");
+    const axisGEnter = selection.append("g")
+        .attr("class", "y-axis");
+    axisGEnter.merge(axisG)
+        .call(axis)
+        .selectAll(".domain").remove();
+    axisGEnter.append("text")
+        .attr("class", styles.axis_label)
+        .attr("y", -40)
+        .attr("transform", "rotate(-90)")
+        .merge(axisG.select(`.${styles.axis_label}`))
+        .attr("x", -height / 2)
+        .text(label);
+};
 
 const renderPlot = (selection, props) => {
     // TODO add legend
@@ -21,12 +59,12 @@ const renderPlot = (selection, props) => {
     const width = +selection.attr("width");
     const height = +selection.attr("height");
 
-    const margins = {top: 30, right: 10, bottom: 30, left: 60};
+    const margins = {top: 50, right: 10, bottom: 30, left: 60};
     const innerMargin = 80;
     const innerWidth = width - margins.left - margins.right;
     const innerHeight = height - margins.top - margins.bottom;
-    const maxRadius = 20;
-    const minRadius = 0;
+    const maxRadius = 70;
+    const minRadius = 10;
 
     const createScales = (data) => {
         const xScale = scalePoint();
@@ -50,82 +88,58 @@ const renderPlot = (selection, props) => {
     const innerG = selection.selectAll(".container").data([null]);
     const innerGEnter = innerG.enter().append("g")
         .attr("class", "container");
-    innerGEnter
-        .merge(innerG)
+    innerGEnter.merge(innerG)
         .attr("transform", `translate(${margins.left}, ${margins.top})`);
 
     innerGEnter.append("rect")
-        .attr("class", "bounding-box")
-        .attr("stroke", "black")
-        .attr("fill", "none")
+        .attr("class", styles.bounding_box)
         .attr("width", innerWidth)
         .attr("height", innerHeight);
 
     // Chart title
     innerGEnter.append("text")
         .attr("class", "chart-title")
-        .attr("text-anchor", "middle")
         .merge(innerG.select(".chart-title"))
         .attr("x", innerWidth / 2)
+        .attr("y", -20)
         .text(title);
 
     // Draw X and Y axis
-    const xAxisG = innerG.select(".x-axis");
-    const xAxisGEnter = innerGEnter
-        .append("g")
-        .attr("class", "x-axis");
-    xAxisGEnter.merge(xAxisG)
-        .call(axisBottom(xScale))
-        .attr("transform", `translate(0, ${innerHeight})`)
-        .selectAll(".domain").remove();
-
-    const yAxisG = innerG.select(".y-axis");
-    const yAxisGEnter = innerGEnter
-        .append("g")
-        .attr("class", "y-axis");
-    yAxisGEnter.merge(yAxisG)
-        .call(axisLeft(yScale))
-        .selectAll(".domain").remove();
-
-    // Axis labels
-    xAxisGEnter.append("text")
-        .attr("class", "axis-label")
-        .attr("fill", "black")
-        .attr("text-anchor", "middle")
-        .merge(xAxisG.select(".axis-label"))
-        .attr("x", innerWidth / 2)
-        .attr("y", 30)
-        .text(xLabel);
-
-    yAxisGEnter.append("text")
-        .attr("class", "axis-label")
-        .attr("fill", "black")
-        .attr("text-anchor", "middle")
-        .attr("y", -40)
-        .attr("transform", "rotate(-90)")
-        .merge(yAxisG.select(".axis-label"))
-        .attr("x", -innerHeight / 2)
-        .text(yLabel);
+    innerGEnter.call(xAxis, {
+        scale: xScale,
+        height: innerHeight,
+        width: innerWidth,
+        label: xLabel
+    });
+    innerGEnter.call(yAxis, {
+        scale: yScale,
+        height: innerHeight,
+        width: innerWidth,
+        label: yLabel
+    });
 
     // Draw the points
-    const circles = innerG.merge(innerGEnter)
-        .selectAll("circle").data(data.values);
-    circles.enter().append("circle")
+    const circles = innerGEnter.selectAll("circle").data(data.values);
+    circles.enter()
+        .append("circle")
+        .attr("class", styles.circles)
         .merge(circles)
         .attr("cx", (d) => xScale(d.x))
         .attr("cy", (d) => yScale(d.y))
-        .attr("r", (d) => radiusScale(d.value))
-        .append("title").text(d => d.value);
+        .attr("r", (d) => d === 0 ? 0 : radiusScale(d.value))
+        .append("title")
+        .text(d => d.value);
 
     const labels = innerG.merge(innerGEnter)
         .selectAll(".circle-label").data(data.values);
     labels.enter().append("text")
         .attr("class", "circle-label")
-        .attr("fill", "white")
+        .attr("fill", "black")
         .merge(labels)
         .attr("x", d => xScale(d.x) - 5)
         .attr("y", d => yScale(d.y) + 5)
-        .text(d => d.value);
+        .text(d => d.value)
+        .append("title").text(d => d.value);
 
 };
 
@@ -144,25 +158,25 @@ const aggregateOver = (agreements, getXDim, getYDim) => {
     const getXIndex = (agreement) => data.properties.xDomain.indexOf(getXDim(agreement));
     const getYIndex = (agreement) => data.properties.yDomain.indexOf(getYDim(agreement));
 
-    agreements.forEach( (d) => {
-        if (getXIndex(d) === -1){
+    agreements.forEach((d) => {
+        if (getXIndex(d) === -1) {
             data.properties.xDomain.push(getXDim(d));
             const newArray = [];
-            data.properties.yDomain.forEach( () => newArray.push(0));
+            data.properties.yDomain.forEach(() => newArray.push(0));
             values.push(newArray);
         }
 
-        if (getYIndex(d) === -1){
+        if (getYIndex(d) === -1) {
             data.properties.yDomain.push(getYDim(d));
-            values.forEach( (d) => d.push(0) );
+            values.forEach((d) => d.push(0));
         }
         values[getXIndex(d)][getYIndex(d)]++;
     });
 
 
-    values.forEach( (row, i) => {
+    values.forEach((row, i) => {
         const d1 = data.properties.xDomain[i];
-        row.forEach( (d, i) => {
+        row.forEach((d, i) => {
             const d2 = data.properties.yDomain[i];
             data.values.push({x: d1, y: d2, value: d});
         });
@@ -186,8 +200,8 @@ const DiscretePointPlot = (props) => {
 
     const svgRef = createRef();
 
-    useEffect(() =>{
-        if(data !== undefined && data.length > 0) {
+    useEffect(() => {
+        if (data !== undefined && data.length > 0) {
             select(svgRef.current)
                 .call(renderPlot, {
                     title: title,
