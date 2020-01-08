@@ -119,28 +119,19 @@ const renderPlot = (selection, props) => {
     });
 
     // Draw the points
-    const circles = innerGEnter.selectAll("circle").data(data.values);
-    circles.enter()
+    const circles = innerG.merge(innerGEnter)
+        .selectAll("circle").data(data.values);
+    const circlesEnter = circles.enter()
         .append("circle")
-        .attr("class", styles.circles)
-        .merge(circles)
+        .attr("class", styles.circles);
+
+    circlesEnter.merge(circles)
         .attr("cx", (d) => xScale(d.x))
         .attr("cy", (d) => yScale(d.y))
-        .attr("r", (d) => d === 0 ? 0 : radiusScale(d.value))
-        .append("title")
+        .attr("r", (d) => d === 0 ? 0 : radiusScale(d.value));
+    circlesEnter.append("title")
         .text(d => d.value);
-
-    const labels = innerG.merge(innerGEnter)
-        .selectAll(".circle-label").data(data.values);
-    labels.enter().append("text")
-        .attr("class", "circle-label")
-        .attr("fill", "black")
-        .merge(labels)
-        .attr("x", d => xScale(d.x) - 5)
-        .attr("y", d => yScale(d.y) + 5)
-        .text(d => d.value)
-        .append("title").text(d => d.value);
-
+    circles.select("title").text(d => d.value);
 };
 
 const aggregateOver = (agreements, getXDim, getYDim) => {

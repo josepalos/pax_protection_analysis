@@ -31,7 +31,7 @@ const RelationBetweenGroups = (props) => {
                     <div className="div-table-cell">
                         Eix X:
                         <Selector
-                            value={selectedX}
+                            selected={selectedX}
                             onChange={onXChange}
                             options={possibleOptions}
                         />
@@ -39,7 +39,7 @@ const RelationBetweenGroups = (props) => {
                     <div style={{display: "table-cell"}}>
                         Eix Y:
                         <Selector
-                            value={selectedY}
+                            selected={selectedY}
                             onChange={onYChange}
                             options={possibleOptions}
                         />

@@ -1,7 +1,7 @@
 import React from "react";
 
 const Selector = ({ selected, onChange, options }) => (
-    <select className="select-x"
+    <select className="select"
             value={selected}
             onChange={onChange}>
         {options.map((d) =>
