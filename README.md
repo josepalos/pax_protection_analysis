@@ -5,7 +5,7 @@
 
 This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-This project was done in the "Visualització de dades" (data visualization) of
+This project was done in the "Visualització de dades" (data visualization) subject of
 the UOC's Data Science Master. The data show is from (https://www.peaceagreements.org/).
 
 The visualization can be accessed in the following url: (https://pax-protection-analysis.herokuapp.com/)
