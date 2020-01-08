@@ -1,0 +1,163 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{placeins}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\newcommand\subject{Visualització de dades}
+\newcommand\activity{PACX}
+
+\title{\large \subject \\ \activity}
+\author{Josep Alòs Pascual}
+\date{\today}
+\makeatletter
+
+\pagestyle{fancy}
+\lhead{\subject}
+\rhead{\activity}
+\rfoot{Josep Alòs Pascual}
+
+\begin{document}
+\maketitle
+
+\section{Introducció}
+Aquest document %TODO
+
+\subsection{Resum del projecte}
+Per determinar com es protegeixen els grups socials d’un territori després d’un
+conflicte, en aquest projecte s’estudia com diferents acords de pau d’entre el
+1990 i 2016 determinen mesures de protecció per aquests grups. En aquest
+document es presenten les dades i una visualització que serveix per reflectir
+les conclusions d’aquest estudi de forma senzilla d’entendre però a la vegada
+útil.
+
+\subsection{Detalls de la visualització}
+\begin{itemize}
+    \item \textbf{Títol de la visualització}: Protecció dels diferents grups
+        socials en acords de pau
+    \item \textbf{URL de la visualització}: \url{https://pax-protection-analysis.herokuapp.com/}
+    \item \textbf{URL del codi font}: \url{https://github.com/josepalos/pax_protection_analysis}
+    \item \textbf{Llicència del projecte}: \textit{Creative Commons Attribution-NonComercial-ShareAlike 4.0
+        Internacional}\footnote{\url{https://creativecommons.org/licenses/by-nc-sa/4.0/}}
+    \item \textbf{Dades utilitzades}: Conjunt de dades sobre 1.500 acords de pau
+        des del 1990 fins l'actualitat; recopilats
+        per la universitat d'Edinburg. Pot ser obtingut de la seva pàgina
+        \url{https://www.peaceagreements.org}, i es troba llicenciat sota les
+        la mateixa llicència que aquest projecte.
+\end{itemize}
+
+\section{Compliment dels objectius inicials}
+Inicialment es va proposar que aquest projecte complís amb els següents
+objectius:
+\begin{enumerate}
+    \item Oferir una visualització interactiva sobre les dades dels acords de
+        pau mitjançant l'eina \textbf{Tableau}.
+    \item Preprocessar les dades rebudes, eliminant dades no utilitzades i/o
+        convertint les variables que s'utilitzen al format adequat; utilitzant
+        \textbf{Python}.
+    \item Centrar la visualització a l'estudi de les proteccions que reben els
+        diferents grups d'una societat després d'un conflicte.
+    \item Avançar des d'una visió general de les dades cap a visualitzacions
+        específiques sobre el tema d'interès.
+\end{enumerate}
+
+El primer objectiu s'ha complert, si bé no de la forma esperada. S'ha optat per
+canviar l'eina que genera la visualització de \textbf{Tableau} a \textbf{D3}.
+Això s'ha fet ja que, un cop el desenvolupador s'ha familiaritzat amb els
+conceptes bàsics d'aquesta nova llibreria, dóna més flexibilitat a l'hora de
+dissenyar i implementar les visualitzacions.
+
+El segon objectiu s'ha complert, però altre cop canviant l'eina utilitzada. S'ha
+optat per dur a terme el preprocessat de les dades mitjançant \textbf{JavaScript}
+en el moment de carregar el conjunt de dades a l'aplicació. Aquest canvi s'ha
+fet ja que, un cop no tenim la restricció de \textbf{Tableau} que no es poden
+preprocessar les dades amb la facilitat que dóna un \textit{script} escrit
+específicament per aixó, a la vegada que es fa servir \textbf{JavaScript} per
+implementar l'aplicació, no cal afegir un pas que s'ha d'executar a priori de
+desplegar la visualització.
+
+Per evaluar els dos últims punts, s'ha d'especificar quines visualitzacions
+s'havien previst inicialment:
+
+\begin{enumerate}
+    \item Visió general de les dades
+        \begin{enumerate}
+            \item Evolució de la quantitat d'acords durant els anys
+            \item Mapa mundial
+        \end{enumerate}
+    \item Visió focalitzada en mostrar la distribució dels acords segons quin
+        nivell de protecció ofereixen als diferents grups.
+        \begin{enumerate}
+            \item Quantitat d'acords que estableixen alguna protecció per algun
+                grup cada any.
+            \item Quantitat de grups protegits segons el nivell i acords
+        \end{enumerate}
+    \item Relacions interessants entre variables dels acords.
+        \begin{enumerate}
+            \item Relació entre els tipus d'acords i la protecció dels grups
+            \item Relació entre la protecció dels diferents grups
+            \item Relació entre la protecció dels grups i mencions al
+                \textit{National Human Rights Institution (NHRI)}
+        \end{enumerate}
+\end{enumerate}
+
+S'han desenvolupat totes les visualitzacions previstes amb l'estructura
+especificada, per tant també s'ha complert els dos últims objectius.
+
+
+\section{Que s'ha après en el projecte}
+Durant el desenvolupament d'aquest projecte he après el procés a seguir durant
+el disseny i implementació d'un projecte de visualització (l'anàlisi de les
+dades, proposta de disseny, implementació\dots). A més a més, he après a fer
+servir eines per implementar visualitzacions de dades: \textbf{Tableau} en les
+primeres entregues de les pràctiques, i \textbf{D3} en la darrera entrega. Si
+bé no he explorat molt l'eina \textbf{Tableau}, de \textbf{D3} he après molt
+sobre aquesta llibreria, com per exemple com gestiona l'actualització dels
+elements de la pàgina un cop canvien les dades. A més, m'ha permès integrar-ho
+amb \textbf{React}, un \textit{framework} que estava aprenent pel meu compte
+paral·lelament, i per tant m'ha servit per practicar aquesta altra eina. Per
+últim, també comentar que m'ha semblat molt interessant les dades que s'han
+fet servir, i si bé ara mateix no en tinc cap ús pràctic a part d'ampliar el
+coneixement, en un futur és possible que torni a utilitzar les dades descobertes.
+
+\section{Descripció tècnica del projecte}
+El projecte s'ha implementat utilitzant el \textit{framework} \textbf{React} per
+tal de gestionar l'estructura de l'aplicació. Aquesta eina permet partir
+l'aplicació en components reutilitzables per tal de garantir les bones pràctiques
+de disseny.
+
+Dins d'aquest \textit{framework} s'han creat components per cada una de les
+visualitzacions. Totes les visualitzacions menys dues s'han implementat
+utilitzant un element \textit{SVG} controlat per la llibreria \textbf{D3}. Les
+altres dues s'han implementat utilitzant una taula, generada de forma dinàmica
+amb \textbf{React}.
+
+La càrrega de dades es fa de forma asíncrona un cop es carrega l'aplicació, i
+les dades es guarden al seu estat. Això fa que, un cop s'han carregat,
+\textbf{React} actualitza els components que la fan servir, i aquests components
+són els encarregats de passar aquestes dades a la llibreria de visualitzacions.
+
+\section{Passos futurs i punts a millorar}
+A continuació s'esmenten possibles canvis i millores a implementar en futures
+iteracions del projecte:
+
+\begin{itemize}
+    \item Utilitzar \textbf{Bootstrap} per fer la pàgina \textit{responsive}.
+    \item Millorar els processos de càrrega, parseig, i mostra de les dades.
+        Actualment no suposen cap problema ja que el volum de dades usades és
+        petit, però personalment considero que el codi pot millorar un cop
+        tingui més domini de \textbf{React} i \textbf{D3}.
+    \item Afegir filtres a les visualitzacions (per exemple, a la quarta
+        visualització afegir la possibilitat de filtrar per anys).
+    \item Afegir més informació als \textit{tooltips} que apareixen en situar
+        el ratolí sobre els diferents gràfics.
+    \item Afegir textos explicatius a cada gràfic, ja sigui amb una capa
+        desplegable o sota d'aquests.
+\end{itemize}
+
+\end{document}
