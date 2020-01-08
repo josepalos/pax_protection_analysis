@@ -26,7 +26,11 @@
 \maketitle
 
 \section{Introducció}
-Aquest document %TODO
+Aquest document presenta el projecte final de visualització de dades sobre el
+dataset d'acords de pau. S'explicarà com s'ha implementat la visualització
+
+A continuació es presenta l'estructura del document
+\tableofcontents
 
 \subsection{Resum del projecte}
 Per determinar com es protegeixen els grups socials d’un territori després d’un
@@ -107,7 +111,21 @@ s'havien previst inicialment:
 \end{enumerate}
 
 S'han desenvolupat totes les visualitzacions previstes amb l'estructura
-especificada, per tant també s'ha complert els dos últims objectius.
+especificada, per tant també s'ha complert els dos últims objectius. L'última
+visualització, però, s'ha canviat d'un núvol de punts a un gràfic amb cercles
+de diferents àrees segons el valor que es vol mostrar, per ser consistent amb
+el gràfic que es té al costat. A més, en aquests dos gràfics s'ha afegit
+l'opció de canviar quines variables es comparen mitjançant un selector sota
+del gràfic.
+
+Referent a la utilitat de la visualització per mostrar el que es vol, considero
+que en general si que és una eina bona ja que s'ha seguit el disseny proposat a
+la pràctica 3, i s'ha comprovat que ens permet evaluar de forma ràpida les
+relacions entre les variables. Tot i això, els dos últims gràfics no aporten
+tanta informació com s'esperava, degut a que el pes dels acords que no
+protegeixen els grups (en el gràfic corresponen al 0, 0) és considerablement
+superior als altres acords, i no s'aconsegueix veure amb claredat les relacions
+de protecció.
 
 
 \section{Que s'ha après en el projecte}
@@ -126,6 +144,54 @@ fet servir, i si bé ara mateix no en tinc cap ús pràctic a part d'ampliar el
 coneixement, en un futur és possible que torni a utilitzar les dades descobertes.
 
 \section{Descripció tècnica del projecte}
+En aquest apartat s'explicarà com s'ha dut a terme la implementació de l'aplicació.
+
+\subsection{Preprocessat de les dades}
+Primer de tot s'ha d'eliminar les columnes de dades que no necessitem per l'anàlisi.
+Els atributs que s'han conservat són:
+\begin{itemize}
+    \item Con: País (o països) involucrats en l'acord de pau
+    \item Contp: Tipus de conflicte
+    \item AgtId: Identificador del tractat
+    \item Agt: Nom del tractat
+    \item Dat: Data del tractat. Només s'ha conservat l'any
+    \item GCh: Protecció dels infants
+    \item GDis: Protecció de persones discapacitades
+    \item GAge: Protecció de la tercera edat
+    \item GMig: Protecció de treballadors migrants
+    \item GRa: Protecció de grups racials, ètnics, o nacionals
+    \item GRe: Protecció de grups religiosos
+    \item GInd: Protecció de grups indígenes
+    \item GRef: Protecció de refugiats
+    \item GSoc: Protecció de classes socials
+    \item GOth: Protecció d'altres grups
+    \item HrNi: Provisió d'un cos que controli els drets humans.
+\end{itemize}
+
+Per cada variable de protecció s'ha conservat també les variables de cada nivell.
+Aquestes són ``nom de grup''+{Rhet,Antid,Subs,Other}.
+
+Per últim, s'ha precalculat un agregat de cada tractat de pau, que consisteix en el
+recompte de grups que estan protegits per cada nivell, obtenint així tres variables
+addicionals
+\begin{itemize}
+    \item rhetoricalCount
+    \item antiDiscriminiationCount
+    \item substantiveCount
+    \item otherProtectionsCount
+\end{itemize}
+
+\subsection{Dades addicionals utilitzades}
+Per generar el mapa s'ha utilitzat les dades proporcionades per \textbf{TopoJSON}
+corresponents a l'àtlas mundial. Es poden obtenir des de la pàgina del projecte
+(\url{https://github.com/topojson/world-atlas}) o des de la pàgina
+\textit{UNPKG}\footnote{UNPKG és una pàgina que actua com a proveïdor de continguts
+per \textbf{NPM}}. S'ha preprocessat aquestes dades per tal de tenir un mapeig
+entre els identificadors del país i el seu nom. A més, s'ha especificat un mapeig
+addicional per a que els noms dels països coincideixin amb els del conjunt de dades
+dels acords de pau.
+
+\subsection{Eines utilitzades}
 El projecte s'ha implementat utilitzant el \textit{framework} \textbf{React} per
 tal de gestionar l'estructura de l'aplicació. Aquesta eina permet partir
 l'aplicació en components reutilitzables per tal de garantir les bones pràctiques
@@ -135,12 +201,14 @@ Dins d'aquest \textit{framework} s'han creat components per cada una de les
 visualitzacions. Totes les visualitzacions menys dues s'han implementat
 utilitzant un element \textit{SVG} controlat per la llibreria \textbf{D3}. Les
 altres dues s'han implementat utilitzant una taula, generada de forma dinàmica
-amb \textbf{React}.
+amb \textbf{React}. Per genera el mapa del món s'ha utilitzat \textbf{D3}
+juntament amb la llibreria \textbf{TopoJSON}\footnote{\url{https://github.com/topojson/topojson}}.
 
 La càrrega de dades es fa de forma asíncrona un cop es carrega l'aplicació, i
 les dades es guarden al seu estat. Això fa que, un cop s'han carregat,
 \textbf{React} actualitza els components que la fan servir, i aquests components
 són els encarregats de passar aquestes dades a la llibreria de visualitzacions.
+
 
 \section{Passos futurs i punts a millorar}
 A continuació s'esmenten possibles canvis i millores a implementar en futures
@@ -158,6 +226,7 @@ iteracions del projecte:
         el ratolí sobre els diferents gràfics.
     \item Afegir textos explicatius a cada gràfic, ja sigui amb una capa
         desplegable o sota d'aquests.
+    \item Afegir transicions animades quan s'actualitzen els gràfics.
 \end{itemize}
 
 \end{document}

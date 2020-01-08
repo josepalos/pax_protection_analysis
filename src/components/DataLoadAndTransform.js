@@ -39,7 +39,7 @@ const fetchAgreements = new Promise((resolve) => {
 
         // TODO add variables of group+"Rhet", group+"Antid"...
         const attributesToReturn = ["Con", "Contp", "AgtId", "Agt",
-            "Dat", "Status", "HrNi", ...groups, ...protectionsForGrous];
+            "Dat", "HrNi", ...groups, ...protectionsForGrous];
 
         // filter attributes
         return Object.keys(d)
