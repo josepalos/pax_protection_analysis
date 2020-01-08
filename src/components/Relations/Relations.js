@@ -1,8 +1,15 @@
 import React, {useState} from "react";
 import RelationBetweenGroups from "./RelationBetweenGroups";
 import RelationBetweenGroupAndHrNi from "./RelationBetweenGroupAndHrNi";
+import TableWithCountAndMedian from "../Tables/TableWithCountAndMedian";
 
-const Relations = ({agreements}) => {
+const Relations = (props) => {
+    const {
+        agreements,
+        conflictTypeCount,
+        conflictTypeMedian,
+    } = props;
+
     const possibleOptions = ["GCh", "GDis", "GAge", "GMig", "GRa", "GRe", "GInd",
         "GOth", "GRef", "GSoc"];
     // TODO move up in the hierarchy
@@ -25,6 +32,15 @@ const Relations = ({agreements}) => {
 
     return (
         <div className="div-table tab-content">
+            <div className="div-table-row">
+                <div className="div-table-cell">
+                    <TableWithCountAndMedian
+                        title={"Protecció cap als grups segons el tipus de conflicte"}
+                        countData={conflictTypeCount}
+                        medianData={conflictTypeMedian}
+                    />
+                </div>
+            </div>
             <div className="div-table-row">
                 <div className="div-table-cell">
                     <RelationBetweenGroups

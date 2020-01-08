@@ -2,15 +2,12 @@ import React from "react";
 
 import SquaresTable from "./Tables/SquaresTable";
 import VerticalGroupedBarChart from "./VerticalBarChart/VerticalGroupedBarChart";
-import TableWithCountAndMedian from "./Tables/TableWithCountAndMedian";
 
 
 const Distribution = (props) => {
     const {
         protectionsForGroupByYearAndLevel,
-        countByProtectionLevel,
-        conflictTypeCount,
-        conflictTypeMedian,
+        countByProtectionLevel
     } = props;
 
     return (
@@ -45,15 +42,6 @@ const Distribution = (props) => {
                             "substantiveCount": "S",
                             "otherProtectionsCount": "O"
                         }}
-                    />
-                </div>
-            </div>
-            <div className="div-table-row">
-                <div className="div-table-cell">
-                    <TableWithCountAndMedian
-                        title={"Protecció cap als grups segons el tipus de conflicte"}
-                        countData={conflictTypeCount}
-                        medianData={conflictTypeMedian}
                     />
                 </div>
             </div>

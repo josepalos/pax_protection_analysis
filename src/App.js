@@ -27,7 +27,7 @@ function App() {
         "Relacions interessants entre variables dels acords"
     ];
 
-    const defaultTabIndex = 2;
+    const defaultTabIndex = 0;
 
     const [countriesFeatures, setCountriesFeatures] = useState({});
     const [agreements, setAgreements] = useState([]);
@@ -72,12 +72,14 @@ function App() {
                     agreements={agreements}
                     protectionsForGroupByYearAndLevel={protectionsForGroupByYearAndLevel}
                     countByProtectionLevel={countByProtectionLevel}
-                    conflictTypeCount={conflictTypeCount}
-                    conflictTypeMedian={conflictTypeMedian}
                 />
             </TabPanel>
             <TabPanel>
-                <Relations agreements={agreements}/>
+                <Relations
+                    agreements={agreements}
+                    conflictTypeCount={conflictTypeCount}
+                    conflictTypeMedian={conflictTypeMedian}
+                />
             </TabPanel>
         </Tabs>
     );
